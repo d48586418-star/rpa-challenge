@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Cortando Histórias — Laboratório de Montagem</title>
+<meta name="description" content="Laboratório de Montagem: uma introdução interativa à edição e à montagem audiovisual. Monte, assista, compare e descubra.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/screens.css">
+<link rel="stylesheet" href="css/lab.css">
+</head>
+<body>
+<a class="skip" href="#app">Pular para o conteúdo</a>
+<header class="appbar" role="banner">
+  <a class="brand" href="#/inicio" aria-label="Cortando Histórias — início">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 3h20L3 23z" fill="#0b0b0b"/><path d="M29 9v20H9z" fill="#0b0b0b"/><path d="M25 3h4v2.2L5.4 29H3v-2.6z" fill="#f5c518"/></svg>
+    <span class="brand-word">Cortando<br>Histórias<small>Laboratório de Montagem</small></span>
+  </a>
+  <nav class="topnav" aria-label="Principal" id="topnav"></nav>
+  <div class="bar-right"><span class="who" id="who"></span></div>
+</header>
+<main id="app" tabindex="-1" aria-live="off"></main>
+<nav class="tabbar" aria-label="Principal (celular)" id="tabbar"></nav>
+<div id="toast" role="status"></div>
+<div id="live" class="sr" aria-live="polite" role="status"></div>
+<noscript><p style="padding:24px;font:16px system-ui">Este laboratório precisa de JavaScript para montar e reproduzir vídeos.</p></noscript>
+<script src="data/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/leituras.js"></script>
+<script src="js/core.js"></script>
+<script src="js/store.js"></script>
+<script src="js/scroll.js"></script>
+<script src="js/player.js"></script>
+<script src="js/lab.js"></script>
+<script src="js/lab-panels.js"></script>
+<script src="js/views-home.js"></script>
+<script src="js/views-path.js"></script>
+<script src="js/views-lab.js"></script>
+<script src="js/views-me.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

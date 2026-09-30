@@ -1,0 +1,75 @@
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:calc(var(--appbar-h) + 8px + var(--dock-pad,0px))}
+body{margin:0;background:var(--papel);color:var(--tinta);font:400 var(--fs-1)/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100dvh}
+h1,h2,h3,h4,p,ul,ol,figure,dl,dd{margin:0}
+ul,ol{padding:0;list-style:none}
+img,video,svg{display:block;max-width:100%}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+a{color:inherit}
+[hidden]{display:none!important}
+::selection{background:var(--claquete);color:var(--tinta)}
+
+/* foco sempre visível */
+:focus{outline:none}
+:focus-visible{outline:3px solid var(--foco);outline-offset:2px;border-radius:4px}
+[tabindex="-1"]:focus,[tabindex="-1"]:focus-visible{outline:none}
+.on-dark :focus-visible,.dark :focus-visible{outline-color:var(--claquete)}
+
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:fixed;left:8px;top:-60px;z-index:1000;background:var(--tinta);color:#fff;padding:10px 14px;border-radius:var(--r1);font-weight:700;text-decoration:none;transition:top .15s}
+.skip:focus{top:8px}
+
+/* tipografia de cartaz */
+.display{font-family:var(--display);font-stretch:68%;font-weight:900;text-transform:uppercase;line-height:.88;letter-spacing:-.005em;font-variation-settings:"wdth" 68}
+.display.wide{font-stretch:100%;font-variation-settings:"wdth" 100;letter-spacing:-.02em}
+.mono{font-family:var(--mono);font-size:var(--fs-0);letter-spacing:.02em}
+.eyebrow{font:500 .72rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--g5)}
+.h2{font-family:var(--display);font-stretch:72%;font-weight:900;text-transform:uppercase;font-size:var(--fs-4);line-height:.92;font-variation-settings:"wdth" 72}
+.h3{font-family:var(--display);font-stretch:80%;font-weight:800;font-size:var(--fs-3);line-height:1;font-variation-settings:"wdth" 80;letter-spacing:-.005em}
+.lead{font-size:var(--fs-2);line-height:1.5;color:var(--g5);max-width:46ch}
+.muted{color:var(--g5)}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* botões — etiqueta adesiva: borda de tinta + sombra seca */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border:var(--line);border-radius:var(--rp);background:var(--papel);color:var(--tinta);font:700 .95rem/1 var(--sans);text-decoration:none;white-space:nowrap;transition:transform var(--dur-1) var(--ease),box-shadow var(--dur-1) var(--ease),background var(--dur-1);box-shadow:0 3px 0 var(--tinta)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 0 var(--tinta)}
+.btn:active{transform:translateY(3px);box-shadow:0 0 0 var(--tinta)}
+.btn.pri{background:var(--claquete)}
+.btn.ink{background:var(--tinta);color:#fff;box-shadow:0 3px 0 var(--g5)}
+.btn.ink:active{box-shadow:0 0 0 var(--g5)}
+.btn.sm{min-height:44px;padding:0 14px;font-size:.85rem}
+.btn.ghost{border-color:var(--g3);box-shadow:none}
+.btn.ghost:hover{border-color:var(--tinta);transform:none;box-shadow:none}
+.btn[disabled],.btn[aria-disabled="true"]{opacity:.38;cursor:not-allowed;transform:none;box-shadow:0 3px 0 var(--g3);border-color:var(--g4)}
+.btn svg{width:20px;height:20px;flex:none}
+.link{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--claquete)}
+.link:hover{background:var(--claquete)}
+
+/* etiqueta-pílula (fita de filme) */
+.tag{display:inline-flex;align-items:center;gap:6px;min-height:24px;padding:0 10px;border-radius:var(--rp);background:var(--tinta);color:#fff;font:700 .68rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.tag.y{background:var(--claquete);color:var(--tinta)}
+.tag.w{background:var(--papel);color:var(--tinta);border:1.5px solid var(--tinta)}
+.tag.g{background:var(--g1);color:var(--g5)}
+.tag[data-film]{background:var(--fc,var(--tinta));color:var(--tinta)}
+
+/* linha de corte */
+.cutline{display:flex;align-items:center;gap:10px;color:var(--g4);font:500 .7rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.cutline::before,.cutline::after{content:"";flex:1;border-top:2px dashed var(--g3)}
+.cutline svg{width:16px;height:16px;flex:none}
+
+/* perfuração de película */
+.sprockets{height:14px;background:radial-gradient(circle at 7px 7px,var(--papel) 2.6px,transparent 3px) 0 0/16px 14px repeat-x,var(--tinta)}
+
+/* fita diagonal */
+.tape{background:var(--claquete);color:var(--tinta);overflow:hidden;border-block:2px solid var(--tinta);white-space:nowrap}
+.tape.black{background:var(--tinta);color:var(--claquete)}
+.tape-track{display:inline-flex;gap:28px;padding:8px 0;animation:tape 38s linear infinite;will-change:transform}
+.tape-track span{font:800 .8rem/1 var(--display);font-stretch:70%;letter-spacing:.08em;text-transform:uppercase;display:inline-flex;align-items:center;gap:28px}
+.tape-track span::after{content:"✂";font-size:.9rem}
+@keyframes tape{to{transform:translateX(-50%)}}
+
+.card{background:var(--papel);border:var(--line);border-radius:var(--r2);padding:var(--s4)}
+.stack>*+*{margin-top:var(--s4)}
+.row{display:flex;gap:var(--s3);align-items:center}
+.wrap{display:flex;flex-wrap:wrap;gap:var(--s2)}

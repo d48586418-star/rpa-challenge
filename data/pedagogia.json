@@ -1,0 +1,17 @@
+{
+  "EX_KULESHOV_001": {"conceito":"efeito Kuleshov","ver":"Olhe o rosto dele por um instante. Agora pense: o que ele está pensando?"},
+  "EX_KULESHOV_002": {"conceito":"efeito Kuleshov","ver":"Há dois closes do menino. O que cada um deixa você ver do rosto dele?"},
+  "EX_CORTE_001":    {"conceito":"corte na ação","ver":"Acompanhe a mão até o copo. Em que momento do gesto você cortaria?"},
+  "EX_CORTE_002":    {"conceito":"jump cut e plano de inserção","ver":"Repare onde a câmera está em cada plano e o que mudou dentro do quadro."},
+  "EX_CORTE_003":    {"conceito":"o mesmo lugar, outro tempo","ver":"Onde a professora está na tela em cada plano? E o que mudou em volta dela?"},
+  "EX_CORTE_004A":   {"conceito":"olhar e contraplano","ver":"Para onde o homem olha? Que imagem responde a esse olhar?"},
+  "EX_CORTE_004B":   {"conceito":"sequência de montagem","ver":"O que cada objeto conta sobre quem vive nessa casa?"},
+  "EX_CORTE_004C":   {"conceito":"cutaway e contraplano","ver":"Quem fala? Quem escuta? O que acontece fora da porta?"},
+  "EX_MURCH_001":    {"conceito":"emoção antes da regra","ver":"Veja o abraço. Que imagem ajuda você a sentir o que ela sente?"},
+  "EX_MURCH_002":    {"conceito":"a hora de revelar","ver":"Quem está sentado ao lado dela? Você descobre de perto ou de longe?"},
+  "EX_JUMPCUT_NL01": {"conceito":"jump cut","ver":"Assista ao plano inteiro. Note o que está no quadro no começo e no fim."},
+  "EX_ELIPSE_NL01":  {"conceito":"elipse","ver":"Assista ao plano inteiro: alguém entra na água e caminha pelo rio. Quanto tempo passa?"},
+  "EX_CONTINU_DF01": {"conceito":"plano/contraplano","ver":"Duas pessoas se encontram. Para onde cada uma olha?"},
+  "EX_MATCHCUT_MC01":{"conceito":"match cut","ver":"Compare o retrato e a pessoa. O que as duas imagens têm em comum?"},
+  "EX_LAB_LIVRE":    {"conceito":null,"ver":"Escolha qualquer plano, de qualquer filme, e comece."}
+}

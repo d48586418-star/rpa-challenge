@@ -1,0 +1,15 @@
+{
+ "projeto": "Cortando Histórias — Laboratório de Montagem",
+ "concepcao": "Débora Augusta",
+ "desenvolvimento": "Assistência de inteligência artificial com Claude Code (Anthropic)",
+ "programa": "Cinema na Comunidade",
+ "instituicoes": [
+  {
+   "nome": "UESC",
+   "papel": "Constava no rodapé e no cabeçalho do laboratório v7 (\"Cinema na Comunidade · UESC\"). Conferir nome completo e papel institucional."
+  }
+ ],
+ "nota_instituicoes": "Só a sigla UESC constava nos arquivos recebidos. Outros créditos institucionais (realização, apoio, parceiros) da cartilha devem ser acrescentados em data/creditos.json e depois: node scripts/build-data.js",
+ "ia": "Ferramentas de inteligência artificial foram utilizadas no processo de desenvolvimento deste laboratório (código, interface e textos de apoio). A concepção pedagógica, a seleção dos filmes e dos planos e as atividades são do projeto.",
+ "filmes_nota": "Os planos usados nas atividades pertencem aos curtas-metragens listados abaixo e aparecem aqui com finalidade educacional."
+}

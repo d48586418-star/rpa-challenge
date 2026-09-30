@@ -1,0 +1,63 @@
+{
+ "fonte": "provisória — agrupa as 9 etapas de data/etapas.json. SUBSTITUIR pela estrutura real da cartilha.",
+ "atos": [
+  {
+   "n": 1,
+   "titulo": "O que um plano faz com o outro",
+   "resumo": "Dois planos juntos dizem algo que nenhum diz sozinho.",
+   "cor": "#5b8cff",
+   "etapas": [
+    1
+   ],
+   "cartilha": {
+    "secao": null,
+    "pagina": null
+   }
+  },
+  {
+   "n": 2,
+   "titulo": "Movimento, olhar e continuidade",
+   "resumo": "O que atravessa o corte: o gesto, o olhar, a forma.",
+   "cor": "#00b872",
+   "etapas": [
+    2,
+    4,
+    9
+   ],
+   "cartilha": {
+    "secao": null,
+    "pagina": null
+   }
+  },
+  {
+   "n": 3,
+   "titulo": "O tempo",
+   "resumo": "Tirar um pedaço muda o tempo. Às vezes o corte aparece; às vezes o tempo só passa.",
+   "cor": "#ff6b45",
+   "etapas": [
+    3,
+    6,
+    7
+   ],
+   "cartilha": {
+    "secao": null,
+    "pagina": null
+   }
+  },
+  {
+   "n": 4,
+   "titulo": "Decisões de montador",
+   "resumo": "Quando tudo é possível, o que você escolhe mostrar — e quando.",
+   "cor": "#b275ff",
+   "etapas": [
+    5,
+    8
+   ],
+   "livre": true,
+   "cartilha": {
+    "secao": null,
+    "pagina": null
+   }
+  }
+ ]
+}
