@@ -1,0 +1,75 @@
+{
+ "fonte": "Glossário do laboratório v7 (arquivo recebido), resumido. Conferir com a cartilha.",
+ "itens": [
+  {
+   "id": "edicao",
+   "titulo": "Edição",
+   "ideia": "Escolher, organizar e unir os pedaços filmados para contar uma história.",
+   "entenda": "O editor decide o que fica, o que sai e em que ordem as imagens aparecem.",
+   "exemplo": "Como um DJ que mistura músicas: o editor mistura imagens.",
+   "veja": [
+    "SC_026",
+    "SC_013"
+   ]
+  },
+  {
+   "id": "montagem",
+   "titulo": "Montagem",
+   "ideia": "Juntar planos de modo que criem sentido, emoção e ritmo.",
+   "entenda": "Não é só pôr um plano depois do outro: é entender como as imagens se falam. Dois planos juntos dizem algo que nenhum diz sozinho.",
+   "exemplo": "O mesmo rosto, com outra imagem ao lado, parece sentir outra coisa.",
+   "veja": [
+    "SC_026",
+    "SC_029"
+   ]
+  },
+  {
+   "id": "plano",
+   "titulo": "Plano",
+   "ideia": "Um pedaço contínuo de filme: tudo o que a câmera filmou sem parar.",
+   "entenda": "Cada vez que a câmera para e recomeça, começa um novo plano. Pode durar meio segundo ou vários minutos.",
+   "exemplo": "A câmera fica no rosto por 3 segundos: isso é um plano.",
+   "veja": [
+    "SC_026"
+   ]
+  },
+  {
+   "id": "corte",
+   "titulo": "Corte",
+   "ideia": "O ponto onde um plano termina e outro começa.",
+   "entenda": "É a transição mais usada no cinema. Bem feito, quase não se percebe; mal feito, tira o espectador da história.",
+   "exemplo": "Num plano a porta está aberta; no seguinte, a pessoa já está dentro.",
+   "veja": [
+    "BH_046",
+    "BH_030"
+   ]
+  },
+  {
+   "id": "timeline",
+   "titulo": "Timeline",
+   "ideia": "A régua do editor: os planos em ordem, cada um com seu tempo.",
+   "entenda": "Mostra quando cada imagem aparece e por quanto tempo. É o mapa da sua montagem.",
+   "exemplo": "Uma fita em que cada pedaço é um plano.",
+   "veja": []
+  },
+  {
+   "id": "enquadramento",
+   "titulo": "Enquadramento",
+   "ideia": "O que aparece dentro da tela e o que fica de fora.",
+   "entenda": "Um plano geral mostra o cenário; um close mostra um rosto ou uma mão. Cada escolha conta parte da história.",
+   "exemplo": "Os olhos em close fazem sentir a emoção mais de perto.",
+   "veja": [
+    "NZ_021",
+    "NZ_016"
+   ]
+  },
+  {
+   "id": "cena",
+   "titulo": "Cena",
+   "ideia": "Um conjunto de planos no mesmo lugar e no mesmo tempo.",
+   "entenda": "O filme se divide em cenas; cada cena, em planos — como capítulos de um livro.",
+   "exemplo": "Todos os planos do jantar formam a cena do jantar.",
+   "veja": []
+  }
+ ]
+}

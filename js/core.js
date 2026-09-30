@@ -57,6 +57,22 @@ CH.clipsOf=seq=>seq.map(s=>{const d=CH.TK[s.id].d;return{take_id:s.id,trim_in:Ma
 
 /* suporte a WebM/VP8 (formato real dos vídeos do projeto) */
 CH.webm=!!document.createElement("video").canPlayType('video/webm; codecs="vp8"');
+CH.mp4=!!document.createElement("video").canPlayType('video/mp4; codecs="avc1.42E01E"');
+/* fonte de vídeo: WebM (original) ou MP4/H.264 (opcional: scripts/to-mp4.sh preenche "mp4" em takes.json) */
+CH.vsrc=t=>CH.webm?t.vid:(CH.mp4&&t.mp4?t.mp4:null);
+
+/* ---------- ponte com a cartilha (data/cartilha.json) — só mostra o que foi preenchido ---------- */
+CH.carti=function(kind,key){
+  const c=(D.cartilha||{}),m=((c[kind]||{})[key])||{};
+  const ato=kind==="atos"?D.atos.atos.find(a=>String(a.n)===String(key)):null;
+  return{pagina:m.pagina||null,secao:m.secao||null,pdf:m.pdf||null,ato};
+};
+CH.cartiLine=function(exId){
+  const ato=CH.atoDe(exId),a=CH.carti("atividades",exId),t=ato?CH.carti("atos",ato.n):{};
+  const pg=a.pagina||t.pagina,pdf=a.pdf||t.pdf,sec=a.secao||t.secao;
+  return{ato,pagina:pg,pdf,secao:sec,text:(ato?"Ato "+ato.n:"")+(sec?" · "+sec:"")+(pg?" · p. "+pg:"")};
+};
+CH.gIcon=n=>({proposta:"check",outro_efeito:"compare",falta:"dots",quebra:"scissors",diferente:"circle",incompleta:"plus"}[n]||"circle");
 
 /* ---------- a11y ---------- */
 let live;
@@ -98,9 +114,15 @@ const P={
   download:'<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',
   pencil:'<path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/>',
   flag:'<path d="M6 21V4M6 5h11l-2 4 2 4H6"/>',
-  mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 4 6M21 9l-4 6"/>'
+  mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 4 6M21 9l-4 6"/>',
+  dots:'<circle cx="6" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18" cy="12" r="1.6" fill="currentColor"/>',
+  circle:'<circle cx="12" cy="12" r="7"/>',
+  half:'<circle cx="12" cy="12" r="7"/><path d="M12 5a7 7 0 0 1 0 14z" fill="currentColor"/>',
+  frame:'<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3 16 5-5 4 4 3-3 6 6"/>',
+  key:'<circle cx="8" cy="15" r="3.5"/><path d="m10.5 12.5 8-8M15 8l2.5 2.5"/>',
+  bang:'<path d="M12 4v10M12 18.5v.5"/>'
 };
 CH.icon=(n,cls="")=>`<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${P[n]||""}</svg>`;
 CH.iconEl=(n,cls)=>{const t=document.createElement("template");t.innerHTML=CH.icon(n,cls).trim();return t.content.firstChild};
-CH.brandMark=()=>`<svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 3h20L3 23z" fill="#0b0b0b"/><path d="M29 9v20H9z" fill="#0b0b0b"/><path d="M25 3h4v2.2L5.4 29H3v-2.6z" fill="#f5c518"/></svg>`;
+CH.brandMark=()=>`<svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 3h20L3 23z" fill="#0b0b0b"/><path d="M29 9v20H9z" fill="#0b0b0b"/><path d="M25 3h4v2.2L5.4 29H3v-2.6z" fill="#d8000f"/></svg>`;
 })();

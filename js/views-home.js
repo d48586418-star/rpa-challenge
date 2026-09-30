@@ -4,20 +4,14 @@
 const CH=window.CH,{h,$,$$,esc,icon}=CH;
 CH.views=CH.views||{};
 
-const COVER=[ /* frames REAIS (vídeo) da capa, em 3 profundidades */
-  {id:"SC_026",cls:"cf1 d2",rot:-7,par:-.10},
-  {id:"NZ_016",cls:"cf2 d1",rot:6,par:-.04},
-  {id:"BH_015",cls:"cf3 d3",rot:-4,par:-.20},
-  {id:"DF_ele_a",cls:"cf4 d1",rot:8,par:-.06},
-  {id:"NL_047",cls:"cf5 d2",rot:-9,par:-.12}
-];
+const COVER=[{id:"SC_026"},{id:"BH_015"},{id:"DF_ele_a"},{id:"NZ_016"}]; /* tira de película com vídeo real (como na capa) */
 function frame(c){
   const t=CH.TK[c.id];if(!t)return"";
-  return `<figure class="cf ${c.cls}" style="--rot:${c.rot}deg" data-par="${c.par}"><div class="cf-in" style="--ar:${CH.ratioCss(t.ar)}"><video data-auto muted loop playsinline preload="metadata" poster="${t.th}" src="${t.vid}" tabindex="-1" aria-hidden="true"></video></div><figcaption class="tag" data-film="${t.f}" style="--fc:var(--f-${t.f})">${t.f}</figcaption></figure>`;
+  return `<figure class="cf ${c.cls}" style="--rot:${c.rot}deg" data-par="${c.par}"><div class="cf-in" style="--ar:${CH.ratioCss(t.ar)}"><video data-auto muted loop playsinline preload="metadata" poster="${t.th}" src="${CH.vsrc(t)}" tabindex="-1" aria-hidden="true"></video></div><figcaption class="tag" data-film="${t.f}" style="--fc:var(--f-${t.f})">${t.f}</figcaption></figure>`;
 }
 function stats(){
   const all=[];CH.data.atos.atos.forEach(a=>CH.atividadesDoAto(a).forEach(i=>all.push(i)));
-  const done=all.filter(i=>CH.progress(i).status==="concluida").length;
+  const done=all.filter(i=>CH.stage(i)>=2).length;
   const st=CH.store.state;
   const free=CH.store.act(CH.LIVRE).versions.length;
   return{total:all.length,done,notes:st.notes.length,disc:Object.keys(st.disc).length,free};
@@ -29,33 +23,36 @@ CH.views.home=function(root){
   const lastValid=last&&CH.ACT[last.exId];
   if(lastValid){
     const ex=CH.ACT[last.exId],pr=CH.progress(last.exId),ato=CH.atoDe(last.exId);
-    cont={href:last.exId===CH.LIVRE?"#/livre":"#/lab/"+last.exId,eye:"Continuar de onde parou",t:ex.t,
+    cont={href:last.exId===CH.LIVRE?"#/livre":"#/lab/"+last.exId,eye:"Continuar",t:ex.t,
       meta:(last.exId===CH.LIVRE?"Laboratório livre":ato?"Ato "+ato.n:"")+` · ${pr.n} ${pr.n===1?"versão":"versões"} · ${CH.ago(last.at)}`};
   }else{
     const id=next||CH.atividadesDoAto(CH.data.atos.atos[0])[0],ato=CH.atoDe(id);
-    cont={href:"#/lab/"+id,eye:"Comece por aqui",t:CH.ACT[id].t,meta:ato?`Ato ${ato.n} · ${ato.titulo}`:""};
+    cont={href:"#/lab/"+id,eye:"Começar a jornada",t:CH.ACT[id].t,meta:ato?`Ato ${ato.n} · ${ato.titulo}`:""};
   }
   const nome=CH.store.name();
   root.innerHTML=`
 <div class="home" data-par-host>
   <section class="cover" aria-labelledby="page-title" data-exit>
-    <div class="cv-grid" aria-hidden="true"></div>
-    <i class="crop tl" aria-hidden="true"></i><i class="crop tr" aria-hidden="true"></i><i class="crop bl" aria-hidden="true"></i><i class="crop br" aria-hidden="true"></i>
-    <div class="cv-frames" data-par-host aria-hidden="true">${COVER.map(frame).join("")}</div>
-    <div class="cv-center">
-      <p class="eyebrow cv-eye">Cinema na Comunidade · Laboratório de Montagem</p>
-      <h1 class="display cv-title" id="page-title" tabindex="-1"><span class="l l1" data-cut="-1">Cortando</span><span class="cv-scissor" aria-hidden="true">${icon("scissors")}<i></i></span><span class="l l2" data-cut="1"><em>Histórias</em></span></h1>
-      <p class="cv-sub">Uma introdução à edição e à montagem audiovisual.<br>Monte com planos de filmes de verdade, assista, compare — e descubra o que o corte faz.</p>
+    <div class="cv-red">
+      <p class="cv-eye">Cinema na Comunidade · Laboratório de Montagem</p>
+      <h1 class="cv-title" id="page-title" tabindex="-1" aria-label="Cortando Histórias">
+        <span class="cv-letters" aria-hidden="true"><i>C</i><i>O</i><i>R</i><i>T</i><i>A</i><i>N</i><i>D</i><i class="sp"></i><i>O</i></span>
+      </h1>
     </div>
-    <div class="cv-foot">
-      <a class="cv-dock" href="${cont.href}"><span class="eyebrow">${esc(cont.eye)}${nome?" · "+esc(nome):""}</span><b class="cv-dock-t">${esc(cont.t)}</b><span class="mono cv-dock-m">${esc(cont.meta)}</span><span class="cv-go" aria-hidden="true">${icon("next")}</span></a>
-      <a class="cv-down" href="#abertura" data-jump="abertura">A abertura <span aria-hidden="true">↓</span></a>
+    <div class="cv-film" aria-hidden="true"><div class="cv-band">${COVER.map(c=>{const t=CH.TK[c.id];return `<figure class="duo sepia" style="--ar:${CH.ratioCss(t.ar)}"><video data-auto muted loop playsinline preload="metadata" poster="${t.th}" src="${CH.vsrc(t)}" tabindex="-1"></video></figure>`}).join("")}</div></div>
+    <div class="cv-white">
+      <p class="cv-hist" aria-hidden="true">Histórias</p>
+      <p class="cv-sub">Introdução à edição e montagem audiovisual.</p>
+      <div class="cv-foot">
+        <a class="cv-dock" href="${cont.href}"><span class="eyebrow">${esc(cont.eye)}${nome?" · "+esc(nome):""}</span><b class="cv-dock-t">${esc(cont.t)}</b><span class="mono cv-dock-m">${esc(cont.meta)}</span><span class="cv-go" aria-hidden="true">${icon("next")}</span></a>
+        <a class="cv-down" href="#abertura" data-jump="abertura">Ver a abertura <span aria-hidden="true">↓</span></a>
+      </div>
     </div>
   </section>
 
   <section class="doors" aria-label="Áreas do laboratório">
     <ul class="door-list">
-      <li><a class="door" href="#/percurso" style="--dc:#2f6bff"><span class="door-n mono">${s.done}/${s.total}</span><b class="door-t">Meu percurso</b><span class="door-d">4 atos de experimentação. Veja onde você está.</span>${icon("path","door-i")}</a></li>
+      <li><a class="door" href="#/percurso" style="--dc:#2f6bff"><span class="door-n mono">${s.done}/${s.total}</span><b class="door-t">Minha jornada</b><span class="door-d">4 atos. Veja o que você já descobriu.</span>${icon("path","door-i")}</a></li>
       <li><a class="door" href="#/percurso" data-flash="lista" style="--dc:#00a866"><span class="door-n mono">${s.total}</span><b class="door-t">Atividades</b><span class="door-d">Todas as atividades, na ordem do percurso.</span>${icon("film","door-i")}</a></li>
       <li><a class="door" href="#/livre" style="--dc:#ff5c35"><span class="door-n mono">${s.free}</span><b class="door-t">Laboratório livre</b><span class="door-d">Sem meta, sem prova. Só você e os planos.</span>${icon("spark","door-i")}</a></li>
       <li><a class="door" href="#/caderno" style="--dc:#a44fff"><span class="door-n mono">${s.notes}</span><b class="door-t">Caderno</b><span class="door-d">Reflexões, descobertas e versões.</span>${icon("book","door-i")}</a></li>
@@ -72,13 +69,13 @@ CH.views.home=function(root){
       <div class="st-prog" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
       <article class="scene sc1"><div class="sc-txt"><p class="eyebrow">01 · O plano</p><h3 class="display sc-h"><span class="ln"><span>Um plano sozinho</span></span><span class="ln"><span>é só uma imagem.</span></span></h3><p class="sc-p">Ele existe. Mas ainda não significa nada.</p></div>
-        <div class="sc-vis"><div class="mon sc-mon" style="--ar:4/3"><video class="v1" data-scrub muted playsinline preload="auto" src="${CH.TK.SC_026.vid}" poster="${CH.TK.SC_026.th}" aria-label="Plano de um rosto, reproduzido conforme você rola a página"></video><span class="mon-tag tag" data-film="SC" style="--fc:var(--f-SC)">PLANO 1</span><span class="mon-tc mono tnum">00:00.0</span></div></div></article>
+        <div class="sc-vis"><div class="mon sc-mon" style="--ar:4/3"><video class="v1" data-scrub muted playsinline preload="auto" src="${CH.vsrc(CH.TK.SC_026)}" poster="${CH.TK.SC_026.th}" aria-label="Plano de um rosto, reproduzido conforme você rola a página"></video><span class="mon-tag tag" data-film="SC" style="--fc:var(--f-SC)">PLANO 1</span><span class="mon-tc mono tnum">00:00.0</span></div></div></article>
 
       <article class="scene sc2"><div class="sc-txt"><p class="eyebrow">02 · O corte</p><h3 class="display sc-h"><span class="ln"><span>Dois planos</span></span><span class="ln"><span>viram <em>uma ideia.</em></span></span></h3><p class="sc-p">O espectador cria a conexão. Isso é montagem.</p></div>
-        <div class="sc-vis"><div class="mon sc-mon wipe" style="--ar:4/3"><video class="va" muted playsinline loop preload="auto" src="${CH.TK.SC_026.vid}" poster="${CH.TK.SC_026.th}" aria-hidden="true"></video><video class="vb" muted playsinline loop preload="auto" src="${CH.TK.SC_013.vid}" poster="${CH.TK.SC_013.th}" aria-hidden="true"></video><i class="wipe-line"><span>${icon("scissors")}</span></i><span class="mon-tag tag" data-film="SC" style="--fc:var(--f-SC)">PLANO 1 | PLANO 2</span></div></div></article>
+        <div class="sc-vis"><div class="mon sc-mon wipe" style="--ar:4/3"><video class="va" muted playsinline loop preload="auto" src="${CH.vsrc(CH.TK.SC_026)}" poster="${CH.TK.SC_026.th}" aria-hidden="true"></video><video class="vb" muted playsinline loop preload="auto" src="${CH.vsrc(CH.TK.SC_013)}" poster="${CH.TK.SC_013.th}" aria-hidden="true"></video><i class="wipe-line"><span>${icon("scissors")}</span></i><span class="mon-tag tag" data-film="SC" style="--fc:var(--f-SC)">PLANO 1 | PLANO 2</span></div></div></article>
 
       <article class="scene sc3"><div class="sc-txt"><p class="eyebrow">03 · Dois planos, um sentido</p><h3 class="display sc-h"><span class="ln"><span>O rosto</span></span><span class="ln"><span>não mudou.</span></span></h3><p class="sc-p">Mas a imagem ao lado muda o que você sente ao vê-lo. Toque para trocar.</p><p class="sc-cap" id="kcap" aria-live="polite">Ele parece lembrar de alguém.</p></div>
-        <div class="sc-vis kvis" data-k="0"><div class="kpair"><div class="mon sc-mon kface" style="--ar:4/3"><video muted playsinline loop preload="auto" src="${CH.TK.SC_026.vid}" poster="${CH.TK.SC_026.th}" aria-hidden="true"></video><span class="mon-tag tag" data-film="SC" style="--fc:var(--f-SC)">ROSTO</span></div><span class="kplus mono" aria-hidden="true">+</span><div class="mon sc-mon kreply" style="--ar:4/3">${["SC_013","SC_029","SC_030"].map((id,i)=>`<video class="kr kr${i}" muted playsinline loop preload="auto" src="${CH.TK[id].vid}" poster="${CH.TK[id].th}" aria-hidden="true"></video>`).join("")}<span class="mon-tag tag" data-film="SC" style="--fc:var(--f-SC)">IMAGEM</span></div></div>
+        <div class="sc-vis kvis" data-k="0"><div class="kpair"><div class="mon sc-mon kface" style="--ar:4/3"><video muted playsinline loop preload="auto" src="${CH.vsrc(CH.TK.SC_026)}" poster="${CH.TK.SC_026.th}" aria-hidden="true"></video><span class="mon-tag tag" data-film="SC" style="--fc:var(--f-SC)">ROSTO</span></div><span class="kplus mono" aria-hidden="true">+</span><div class="mon sc-mon kreply" style="--ar:4/3">${["SC_013","SC_029","SC_030"].map((id,i)=>`<video class="kr kr${i}" muted playsinline loop preload="auto" src="${CH.vsrc(CH.TK[id])}" poster="${CH.TK[id].th}" aria-hidden="true"></video>`).join("")}<span class="mon-tag tag" data-film="SC" style="--fc:var(--f-SC)">IMAGEM</span></div></div>
           <div class="kopts" role="group" aria-label="Imagem ao lado do rosto">
             ${[["SC_013","Ele parece lembrar de alguém."],["SC_029","Ele parece inquieto, perturbado."],["SC_030","Ele parece esperar algo."]].map(([id,c],i)=>`<button type="button" class="kopt${i?"":" on"}" data-cap="${esc(c)}" data-i="${i}" aria-pressed="${i===0}"><img src="${CH.TK[id].th}" alt="Imagem ${i+1}: ${esc(CH.TK[id].s)}" width="120" height="90"><span class="mono">${i+1}</span></button>`).join("")}
           </div></div></article>

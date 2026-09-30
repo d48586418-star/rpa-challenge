@@ -1,6 +1,6 @@
 {
  "projeto": "Cortando Histórias — Laboratório de Montagem",
- "concepcao": "Débora Augusta",
+ "concepcao": "Débora Augusta Alves Santos",
  "desenvolvimento": "Assistência de inteligência artificial com Claude Code (Anthropic)",
  "programa": "Cinema na Comunidade",
  "instituicoes": [
@@ -10,6 +10,25 @@
   }
  ],
  "nota_instituicoes": "Só a sigla UESC constava nos arquivos recebidos. Outros créditos institucionais (realização, apoio, parceiros) da cartilha devem ser acrescentados em data/creditos.json e depois: node scripts/build-data.js",
- "ia": "Ferramentas de inteligência artificial foram utilizadas no processo de desenvolvimento deste laboratório (código, interface e textos de apoio). A concepção pedagógica, a seleção dos filmes e dos planos e as atividades são do projeto.",
- "filmes_nota": "Os planos usados nas atividades pertencem aos curtas-metragens listados abaixo e aparecem aqui com finalidade educacional."
+ "ia": "Ferramentas de inteligência artificial foram usadas no desenvolvimento deste laboratório: Claude Code (Anthropic) escreveu e revisou o código, a interface e textos de apoio, sob direção do projeto. A concepção pedagógica, a seleção dos filmes e dos planos, as atividades e as leituras vêm do projeto Cortando Histórias.",
+ "filmes_nota": "Os planos usados nas atividades pertencem aos curtas-metragens listados abaixo e aparecem aqui com finalidade educacional.",
+ "papeis": [
+  {
+   "papel": "Criação e concepção do projeto",
+   "nome": "Débora Augusta Alves Santos"
+  },
+  {
+   "papel": "Projeto e execução",
+   "nome": "Débora Augusta Alves Santos"
+  },
+  {
+   "papel": "Conteúdo pedagógico, seleção dos filmes, dos planos e das atividades",
+   "nome": "Débora Augusta Alves Santos (conforme o projeto)"
+  },
+  {
+   "papel": "Desenvolvimento e implementação do laboratório",
+   "nome": "Colaboração de inteligência artificial — Claude Code (Anthropic)"
+  }
+ ],
+ "politica_imagens": "Nenhuma imagem ou vídeo deste laboratório foi gerado por IA. Todas as imagens em movimento e quadros são planos dos curtas-metragens listados abaixo. Ícones, padrões de película, duotone e demais elementos gráficos são SVG/CSS criados com assistência de IA (código). Se imagens geradas por IA forem acrescentadas no futuro, devem ser identificadas aqui, com a ferramenta usada, e nunca receber autoria humana que não existe."
 }

@@ -6,7 +6,7 @@ const rd=f=>JSON.parse(fs.readFileSync(path.join(D,f),'utf8'));
 const takes=rd('takes.json');
 const out={
   takes, activities:rd('activities.json'), exf:rd('exercises_engine.json'), films:rd('films.json'),
-  etapas:rd('etapas.json'), leituras:rd('leituras.json'), atos:rd('atos.json'), pedagogia:rd('pedagogia.json'),
+  etapas:rd('etapas.json'), leituras:rd('leituras.json'), atos:rd('atos.json'), pedagogia:rd('pedagogia.json'),jornada:rd('jornada.json'),cartilha:rd('cartilha.json'),fundamentos:rd('fundamentos.json'),
   creditos:fs.existsSync(path.join(D,'creditos.json'))?rd('creditos.json'):null
 };
 fs.writeFileSync(path.join(D,'data.js'),'/* GERADO por scripts/build-data.js — não editar à mão. */\nwindow.CH_DATA='+JSON.stringify(out)+';\n');

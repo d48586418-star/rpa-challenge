@@ -1,0 +1,184 @@
+{
+ "instrucoes": "Preencha 'pagina' (número impresso), 'secao' e, se houver PDF no projeto, 'pdf' (ex.: \"cartilha/cortando-historias.pdf#page=18\"). Depois: node scripts/build-data.js. Nada é inventado: campos null não aparecem na interface.",
+ "atos": {
+  "1": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "2": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "3": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "4": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  }
+ },
+ "atividades": {
+  "EX_KULESHOV_001": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_KULESHOV_002": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_CORTE_001": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_CORTE_002": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_CORTE_003": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_CORTE_004A": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_CORTE_004B": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_CORTE_004C": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_MURCH_001": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_MURCH_002": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_JUMPCUT_NL01": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_ELIPSE_NL01": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_CONTINU_DF01": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_MATCHCUT_MC01": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "EX_LAB_LIVRE": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  }
+ },
+ "conceitos": {
+  "a hora de revelar": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "contraplano": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "corte antes da ação": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "corte na ação": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "cutaway": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "efeito Kuleshov": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "elipse": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "emoção antes da regra": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "jump cut": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "jump cut (salto)": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "match cut": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "o mesmo lugar, outro tempo": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "olhar e contraplano": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "plano de inserção": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "plano/contraplano": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  },
+  "sequência de montagem": {
+   "secao": null,
+   "pagina": null,
+   "pdf": null
+  }
+ }
+}

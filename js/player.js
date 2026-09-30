@@ -20,7 +20,7 @@ class SeqPlayer{
   setSeq(seq){
     this.stop(true);
     let x=0;
-    this.segs=seq.map(s=>{const tk=CH.TK[s.id],d=tk.d*(s.b-s.a),g={id:s.id,start:x,dur:d,srcIn:tk.d*s.a,srcOut:tk.d*s.b,url:tk.vid,th:tk.th,tk};x+=d;return g});
+    this.segs=seq.map(s=>{const tk=CH.TK[s.id],d=tk.d*(s.b-s.a),g={id:s.id,start:x,dur:d,srcIn:tk.d*s.a,srcOut:tk.d*s.b,url:CH.vsrc(tk),th:tk.th,tk};x+=d;return g});
     this.T=x;this.t=0;this.idx=0;
     this.v.forEach(v=>{v.dataset.u="";v.classList.remove("on")});
     this.paintFrame(0);
@@ -34,7 +34,7 @@ class SeqPlayer{
   /* ---- carregamento ---- */
   _ready(v){return new Promise(res=>{if(v.readyState>=1)return res();const f=()=>{v.removeEventListener("loadedmetadata",f);v.removeEventListener("error",f);res()};v.addEventListener("loadedmetadata",f);v.addEventListener("error",f)})}
   async _load(v,seg,at){
-    if(!seg.url||!CH.webm){v.dataset.u="";return false}
+    if(!seg.url){v.dataset.u="";return false}
     if(v.dataset.u!==seg.url){v.dataset.u=seg.url;v.src=seg.url;v.load()}
     await this._ready(v);
     if(v.error)return false;
@@ -44,7 +44,7 @@ class SeqPlayer{
   _seeked(v){return new Promise(res=>{if(!v.seeking&&v.readyState>=2)return res();const f=()=>{v.removeEventListener("seeked",f);v.removeEventListener("loadeddata",f);res()};v.addEventListener("seeked",f);v.addEventListener("loadeddata",f);setTimeout(res,1500)})}
   _show(i){this.v.forEach((v,k)=>v.classList.toggle("on",k===i))}
   _setNote(seg,ok){
-    if(this.note){this.note.hidden=!!ok||!seg;if(!ok&&seg)this.note.textContent=CH.webm?"Este plano não tem arquivo de vídeo — mostramos só um quadro.":"Este navegador não reproduz o formato de vídeo do laboratório (WebM). Atualize o sistema ou abra no Chrome/Firefox."}
+    if(this.note){this.note.hidden=!!ok||!seg;if(!ok&&seg)this.note.textContent=(CH.webm||CH.vsrc(seg.tk))?"Este plano não tem arquivo de vídeo — mostramos só um quadro.":"Este navegador não reproduz o formato de vídeo do laboratório (WebM). Atualize o sistema ou abra no Chrome/Firefox."}
     if(this.poster){this.poster.style.backgroundImage=seg?`url(${seg.th})`:"";this.poster.classList.toggle("on",!ok)}
   }
   /* mostra o quadro REAL do vídeo no instante t (parado) */
@@ -105,19 +105,19 @@ class SeqPlayer{
   async _prefetch(i){
     const seg=this.segs[i];if(!seg)return;
     const b=this.v[1-this.front];
-    if(!seg.url||!CH.webm)return;
+    if(!seg.url)return;
     await this._load(b,seg,seg.srcIn);
   }
   _advance(){
     const i=this.idx+1,seg=this.segs[i],b=this.v[1-this.front],cur=this.v[this.front];
     this.idx=i;
-    if(CH.webm&&seg.url&&b.dataset.u===seg.url){
+    if(seg.url&&b.dataset.u===seg.url){
       this.front=1-this.front;
       b.muted=true;b.play().catch(()=>{});
       this._show(this.front);cur.pause();
       if(this.poster)this.poster.classList.remove("on");
       this._setNote(seg,true);this.still=null;
-    }else if(CH.webm&&seg.url){
+    }else if(seg.url){
       /* não deu tempo de pré-carregar: carrega agora (o relógio espera o vídeo) */
       this.front=1-this.front;const v=this.v[this.front];cur.pause();
       this._load(v,seg,seg.srcIn).then(()=>{if(this.idx===i&&this.playing){this._show(this.front);v.play().catch(()=>{});this._setNote(seg,true)}});

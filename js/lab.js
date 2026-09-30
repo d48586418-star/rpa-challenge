@@ -45,11 +45,12 @@ class Lab{
   ${free?"":`<ol class="stepper" id="stepper" tabindex="0" aria-label="Etapas da experimentação"></ol>`}
 
   <section class="mission" aria-labelledby="ms-h">
-    <div class="ms-top"><span class="eyebrow" id="ms-h">${free?"Laboratório livre":"Seu desafio"}</span>${free?"":`<span class="tag ${this.rp().required?"y":"g"}" id="refl-tag">Reflexão ${this.rp().required?"obrigatória":"opcional"}</span>`}</div>
+    <div class="ms-top"><span class="eyebrow" id="ms-h">${free?"Laboratório livre":"Faça"}</span>${free?"":`<span class="tag ${this.rp().required?"y":"g"}" id="refl-tag">${this.rp().required?"Reflexão para aprofundar":"Reflexão opcional"}</span>`}</div>
     <p class="ms-text">${esc(ex.student_mission)}</p>
-    ${ped.ver&&!free?`<p class="ms-ver"><b>Antes de montar:</b> ${esc(ped.ver)}</p>`:""}
-    ${free?"":`<p class="ms-carti">${icon("book")}<span>Na cartilha: volte ao Ato ${ato?ato.n:""} — <em>${ato?esc(ato.titulo):""}</em>.</span></p>`}
+    ${ped.observe&&!free?`<p class="ms-ver"><span class="eyebrow">Observe</span>${esc(ped.observe)}</p>`:""}
+    ${free&&ped.observe?`<p class="ms-ver">${esc(ped.observe)}</p>`:""}
   </section>
+  <div class="coach" id="coach" role="status" hidden></div>
 
   <div class="dock">
     <div class="dock-in">
@@ -82,10 +83,10 @@ class Lab{
         <button class="btn sm ghost" id="b-clear" type="button">${icon("x")}Limpar</button>
       </div>
 
-  <div class="ptabs" role="tablist" aria-label="Painéis do laboratório">
+  <div class="ptabs" role="tablist" aria-label="Painéis do laboratório: planos, leitura e aprofundamento">
     <button role="tab" id="t-planos" aria-controls="p-planos" aria-selected="true" data-tab="planos">Planos</button>
     <button role="tab" id="t-leitura" aria-controls="p-leitura" aria-selected="false" data-tab="leitura">Leitura<i class="dot" hidden></i></button>
-    <button role="tab" id="t-versoes" aria-controls="p-versoes" aria-selected="false" data-tab="versoes">Versões<b class="cnt" id="cnt-v">0</b></button>
+    <button role="tab" id="t-versoes" aria-controls="p-versoes" aria-selected="false" data-tab="versoes">Aprofundar<b class="cnt" id="cnt-v">0</b></button>
   </div>
   <div class="panels">
     <section class="panel" id="p-planos" role="tabpanel" aria-labelledby="t-planos"></section>
@@ -127,6 +128,10 @@ class Lab{
     $$("[data-tab]",this.el).forEach(b=>{b.onclick=()=>this.setTab(b.dataset.tab);b.onkeydown=e=>{
       const tabs=$$("[data-tab]",this.el).filter(x=>!x.hidden&&x.offsetParent!==null),i=tabs.indexOf(b);
       if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();const n=tabs[(i+(e.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length];n.focus();this.setTab(n.dataset.tab)}}});
+    this.el.addEventListener("click",e=>{
+      if(e.target.closest("[data-coach-skip]")){CH.store.flag("tutorialDone",true);this.renderCoach()}
+      if(e.target.closest("[data-save-quick]"))this.saveVersion();
+    });
     this.bindTimeline();
     this._ro=new ResizeObserver(()=>{if(!this.destroyed&&this._lastW!==this.$("#tl-scroll").clientWidth)this.renderTL()});
     this._ro.observe(this.$("#tl-scroll"));
@@ -368,13 +373,22 @@ class Lab{
     this.$("#b-rm").disabled=!s;this.$("#b-undo").disabled=!this.hist.length;this.$("#b-clear").disabled=!n;
     const ops=this.ops();
     /* esconde ferramentas que a atividade não oferece */
-    this.$("#b-cut").hidden=!(ops.trim&&ops.trim.enabled)&&!(ops.split&&ops.split.enabled);
-    this.$("#b-left").hidden=this.$("#b-right").hidden=!ops.reorder;
-    this.$("#b-rm").hidden=!ops.remove;
+        this.$("#b-rm").hidden=!ops.remove;
+    this.updateToolsVis&&this.updateToolsVis();
+  }
+  /* revelação progressiva: só o necessário, quando é necessário */
+  updateToolsVis(){
+    const n=this.seq.length,t=this.$("#tools");if(!t)return;
+    t.hidden=n===0;
+    const ops=this.ops(),two=n>=2,s=this.sel>=0?this.seq[this.sel]:null,can=s&&(this.canSplit(s.id)||this.canTrim(s.id));
+    this.$("#b-left").hidden=this.$("#b-right").hidden=!ops.reorder||!two;
+    this.$("#b-cut").hidden=!can||!((ops.trim&&ops.trim.enabled)||(ops.split&&ops.split.enabled));
+    this.$("#b-clear").hidden=!two;
+    this.$("#b-undo").hidden=!this.hist.length;
   }
   refresh(){
     this.player.setSeq(this.seq);this.t=0;
-    this.afterChange();this.setTab(this.tab);this.renderChips&&this.renderChips();
+    this.afterChange();this.setTab(this.tab);this.renderChips&&this.renderChips();this.updateTabs&&this.updateTabs();
     if(this.seq.length){this.sel=0;this.player.seek(0);this.updateSelUI()}
     this.applyWide();
     this._mq=matchMedia("(min-width:1100px)");this._mq.addEventListener&&this._mq.addEventListener("change",()=>this.applyWide());

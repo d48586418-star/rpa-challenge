@@ -69,7 +69,7 @@ CH.views.notebook=function(root){
 CH.views.me=function(root){
   const all=[];CH.data.atos.atos.forEach(a=>CH.atividadesDoAto(a).forEach(i=>all.push(i)));
   const prog=Object.fromEntries(all.map(i=>[i,CH.progress(i)]));
-  const done=all.filter(i=>prog[i].status==="concluida").length;
+  const done=all.filter(i=>CH.stage(i)>=2).length;
   const disc=CH.store.discoveries(),names=allNames(),found=Object.keys(disc);
   const st=CH.store.state,pf=st.prefs;
   const nVer=Object.values(st.act).reduce((a,x)=>a+x.versions.length,0);
@@ -86,10 +86,11 @@ CH.views.me=function(root){
 
   <section class="me-blk" aria-labelledby="me-p">
     <h2 class="h3" id="me-p">Seu percurso</h2>
-    <div class="me-nums"><div><b class="display">${done}</b><span>de ${all.length} atividades concluídas</span></div><div><b class="display">${nVer}</b><span>versões guardadas</span></div><div><b class="display">${st.notes.length}</b><span>anotações</span></div></div>
-    <ol class="contact-strip small">${all.map(id=>{const a=CH.atoDe(id),on=prog[id].status==="concluida";return `<li class="cs ${on?"on":""}"><a href="#/lab/${id}" aria-label="${esc(CH.ACT[id].t)}: ${on?"concluída":prog[id].status==="andamento"?"em andamento":"não iniciada"}">${CH.frameSVG(a?a.cor:"#f5c518",on)}</a></li>`}).join("")}</ol>
+    <div class="me-nums"><div><b class="display">${done}</b><span>de ${all.length} atividades com descoberta</span></div><div><b class="display">${nVer}</b><span>versões guardadas</span></div><div><b class="display">${st.notes.length}</b><span>anotações</span></div></div>
+    <ol class="contact-strip small">${all.map(id=>{const a=CH.atoDe(id),lv=CH.stage(id);return `<li class="cs lv${lv}"><a href="#/lab/${id}" aria-label="${esc(CH.ACT[id].t)}: ${CH.STAGE_LABEL[lv]}">${CH.frameSVG(a?a.cor:"#d8000f",lv)}</a></li>`}).join("")}</ol>
     <a class="btn sm" href="#/percurso">Abrir percurso${icon("next")}</a>
   </section>
+  <section class="me-blk">${CH.jornadaHTML(true)}<a class="btn sm" href="#/conceitos">${icon("key")}Biblioteca de descobertas</a></section>
 
   <section class="me-blk" aria-labelledby="me-d">
     <h2 class="h3" id="me-d">Descobertas <span class="mono muted">${found.length} de ${names.length}</span></h2>
@@ -131,12 +132,11 @@ CH.views.credits=function(root){
   <a class="back" href="#/eu">${icon("back")}Meu espaço</a>
   <header class="page-head"><span class="eyebrow">Créditos</span><h1 class="h2" id="page-title" tabindex="-1">${esc(C.projeto||"Cortando Histórias — Laboratório de Montagem")}</h1></header>
   <dl class="cred-dl">
-    <div><dt class="eyebrow">Concepção e execução do projeto</dt><dd class="display">${esc(C.concepcao||"")}</dd></div>
-    <div><dt class="eyebrow">Desenvolvimento / implementação</dt><dd class="display">${esc(C.desenvolvimento||"")}</dd></div>
+    ${(C.papeis||[]).map(p=>`<div><dt class="eyebrow">${esc(p.papel)}</dt><dd class="display">${esc(p.nome)}</dd></div>`).join("")}
     <div><dt class="eyebrow">Programa</dt><dd class="display">${esc(C.programa||"")}</dd></div>
     ${(C.instituicoes||[]).length?`<div><dt class="eyebrow">Instituições</dt><dd><ul>${C.instituicoes.map(i=>`<li><b class="display">${esc(i.nome)}</b></li>`).join("")}</ul></dd></div>`:""}
   </dl>
-  <section class="cred-ia"><h2 class="h3">Uso de inteligência artificial</h2><p>${esc(C.ia||"")}</p></section>
+  <section class="cred-ia"><h2 class="h3">Uso de inteligência artificial</h2><p>${esc(C.ia||"")}</p><h3 class="h3 cred-h3">Imagens</h3><p>${esc(C.politica_imagens||"")}</p></section>
   <section class="cred-f"><h2 class="h3">Filmes dos planos</h2><p class="muted">${esc(C.filmes_nota||"")}</p>
     <ul>${Object.entries(F).map(([k,f])=>`<li><span class="tag" data-film="${k}" style="--fc:var(--f-${k})">${k}</span><b>${esc(f.t)}</b>${f.d?`<span class="muted"> — ${esc(f.d)}</span>`:""}</li>`).join("")}</ul></section>
   <section class="cred-f"><h2 class="h3">Fontes</h2><p class="muted">Archivo, Inter e JetBrains Mono — todas sob licença SIL Open Font License 1.1, distribuídas junto com o projeto em <span class="mono">fonts/</span>.</p></section>
@@ -144,3 +144,53 @@ CH.views.credits=function(root){
   return{title:"Créditos"};
 };
 })();
+
+/* ---------------- Jornada do Editor: linha de montagem, não nível ---------------- */
+CH.jornadaHTML=function(compact){
+  const J=CH.data.jornada.estacoes;
+  const items=J.map((e,i)=>{
+    const st=e.atividades.map(id=>CH.stage(id)),lit=st.some(x=>x>=2),seen=st.some(x=>x>=1);
+    return `<li class="jn ${lit?"lit":seen?"seen":""}"><span class="jn-n mono">${String(i+1).padStart(2,"0")}</span><b>${CH.esc(e.titulo)}</b>${compact?"":`<span class="jn-f">${CH.esc(e.frase)}</span>`}<span class="sr">${lit?", descoberto":seen?", experimentado":", ainda não"}</span></li>`}).join("");
+  const n=J.filter(e=>e.atividades.some(id=>CH.stage(id)>=2)).length;
+  return `<section class="jornada" aria-labelledby="jn-h"><div class="jn-top"><h2 class="h3" id="jn-h">Sua jornada do editor</h2><span class="mono">${n} de ${J.length} estações</span></div>
+    <p class="muted jn-lead">Você está aprendendo a olhar como editor. Cada estação acende quando você descobre algo nela.</p>
+    <ol class="jn-line" tabindex="0" aria-label="Estações da jornada do editor">${items}</ol><div class="sprockets" aria-hidden="true"></div></section>`;
+};
+
+/* ---------------- Biblioteca de descobertas ---------------- */
+CH.views.concepts=function(root){
+  const F=CH.data.fundamentos.itens;
+  const byName={};
+  Object.entries(CH.data.leituras.atividades).forEach(([ex,l])=>l.forEach(r=>{if(r.nome){(byName[r.nome]=byName[r.nome]||{ex:[],por:null});if(!byName[r.nome].ex.includes(ex))byName[r.nome].ex.push(ex);if(!byName[r.nome].por&&r.situacao==="proposta")byName[r.nome].por=r.por_que||r.o_que}}));
+  const disc=CH.store.discoveries(),names=Object.keys(byName);
+  const cap=n=>n.charAt(0).toUpperCase()+n.slice(1);
+  root.innerHTML=`
+<div class="page conc">
+  <header class="page-head"><span class="eyebrow">Biblioteca de descobertas</span><h1 class="h2" id="page-title" tabindex="-1">O que você já sabe ver</h1>
+  <p class="lead">Ideias de montagem, cada uma com exemplo em vídeo. Os conceitos de técnica só aparecem aqui depois de você experimentá-los.</p></header>
+
+  <section aria-labelledby="c-f"><h2 class="h3" id="c-f">Fundamentos</h2>
+  <ul class="fund">${F.map((f,i)=>`<li class="fd" id="f-${f.id}"><div class="fd-v">${f.veja.length?`<div class="fd-strip duo">${f.veja.map(id=>CH.TK[id]?`<img src="${CH.TK[id].th}" alt="" width="120" height="90" loading="lazy">`:"").join("")}</div>`:`<div class="fd-tl" aria-hidden="true"><i></i><i></i><i></i></div>`}</div>
+    <div class="fd-t"><span class="eyebrow">${String(i+1).padStart(2,"0")}</span><h3 class="h3">${CH.esc(f.titulo)}</h3><p class="fd-i">${CH.esc(f.ideia)}</p>
+    <details><summary>Entenda</summary><p>${CH.esc(f.entenda)}</p><p class="muted">${CH.esc(f.exemplo)}</p></details></div></li>`).join("")}</ul></section>
+
+  <section aria-labelledby="c-t"><h2 class="h3" id="c-t">Técnicas descobertas <span class="mono muted">${names.filter(n=>disc[n]).length} de ${names.length}</span></h2>
+  <ul class="tec">${names.map(n=>{
+    const d=byName[n],on=!!disc[n],ex=d.ex[0],ref=CH.referenceSeq(ex),c=CH.carti("conceitos",n),ato=CH.atoDe(ex);
+    if(!on)return `<li class="tc lock"><span class="eyebrow">A descobrir</span><b class="display" aria-hidden="true">?</b><span class="muted">Sai de: <a class="link" href="#/lab/${ex}">${CH.esc(CH.ACT[ex].t)}</a></span></li>`;
+    return `<li class="tc on"><span class="eyebrow">Descoberta</span><h3 class="display">${CH.esc(cap(n))}</h3>
+      <p>${CH.esc(d.por||"")}</p>
+      ${ref?`<div class="tc-v"><div class="monitor tc-mon" data-ref="${ex}" style="--ar:${CH.ratioCss(CH.ratioOf(ex))};--arn:${CH.ratioOf(ex)==="4:3"?1.3333:1.7778}"><video class="mv-a" muted playsinline></video><video class="mv-b" muted playsinline></video><div class="mv-poster"></div><p class="mv-note" hidden></p></div><button class="btn sm" type="button" data-play="${ex}">${CH.icon("play")}Ver exemplo</button></div>`:""}
+      <p class="tc-l">${CH.icon("pencil","tiny")}<b>Experimente:</b> ${d.ex.map(e=>`<a class="link" href="#/lab/${e}">${CH.esc(CH.ACT[e].t)}</a>`).join(", ")}</p>
+      <p class="tc-l">${CH.icon("book","tiny")}<b>Na cartilha:</b> ${ato?"Ato "+ato.n:""}${c.pagina?" · p. "+c.pagina:""}${c.pdf?` · <a class="link" href="${CH.esc(c.pdf)}" target="_blank" rel="noopener">abrir</a>`:""}</p></li>`}).join("")}</ul></section>
+</div>`;
+  const pl={};
+  root.addEventListener("click",e=>{
+    const b=e.target.closest("[data-play]");if(!b)return;
+    const ex=b.dataset.play,mon=root.querySelector(`.tc-mon[data-ref="${ex}"]`);
+    if(!pl[ex]){pl[ex]=new CH.SeqPlayer(mon,{onEnd:()=>{b.lastChild.textContent="Ver de novo"}});pl[ex].setSeq(CH.referenceSeq(ex))}
+    Object.entries(pl).forEach(([k,p])=>{if(k!==ex)p.pause()});
+    pl[ex].playing?pl[ex].pause():pl[ex].play(0);
+  });
+  return{title:"Biblioteca de descobertas",destroy(){Object.values(pl).forEach(p=>p.destroy())}};
+};

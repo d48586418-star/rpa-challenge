@@ -1,0 +1,69 @@
+{
+ "fonte": "proposta a partir das atividades reais; conferir/renomear com a cartilha",
+ "estacoes": [
+  {
+   "id": "olhar",
+   "titulo": "Olhar",
+   "frase": "Aprender para onde o plano olha.",
+   "atividades": [
+    "EX_CORTE_004A",
+    "EX_CONTINU_DF01"
+   ]
+  },
+  {
+   "id": "relacionar",
+   "titulo": "Relacionar",
+   "frase": "Um plano muda quando encontra outro.",
+   "atividades": [
+    "EX_KULESHOV_001",
+    "EX_KULESHOV_002"
+   ]
+  },
+  {
+   "id": "cortar",
+   "titulo": "Cortar",
+   "frase": "Onde o corte cai muda o que se percebe.",
+   "atividades": [
+    "EX_CORTE_001",
+    "EX_CORTE_004C"
+   ]
+  },
+  {
+   "id": "organizar",
+   "titulo": "Organizar",
+   "frase": "A ordem altera o sentido.",
+   "atividades": [
+    "EX_CORTE_004B"
+   ]
+  },
+  {
+   "id": "tempo",
+   "titulo": "Manipular o tempo",
+   "frase": "Retirar também é uma decisão.",
+   "atividades": [
+    "EX_JUMPCUT_NL01",
+    "EX_CORTE_002",
+    "EX_CORTE_003",
+    "EX_ELIPSE_NL01"
+   ]
+  },
+  {
+   "id": "sentido",
+   "titulo": "Criar sentido",
+   "frase": "Uma imagem responde a outra.",
+   "atividades": [
+    "EX_MATCHCUT_MC01",
+    "EX_MURCH_002"
+   ]
+  },
+  {
+   "id": "escolher",
+   "titulo": "Fazer escolhas",
+   "frase": "Montar é escolher.",
+   "atividades": [
+    "EX_MURCH_001",
+    "EX_LAB_LIVRE"
+   ]
+  }
+ ]
+}

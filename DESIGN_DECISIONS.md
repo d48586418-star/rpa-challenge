@@ -144,3 +144,36 @@ Landing → aplicação · single-file 15 MB → projeto com assets reais · XP 
 * **Mobile**: dock fixo compacto (monitor ≈ 25 % da altura + timeline), transporte sobre o monitor, ferramentas em grade 3×2, biblioteca/leitura/versões em abas; `scroll-padding` compensa o dock para o foco nunca ficar escondido.
 * **Desktop ≥ 1100 px**: atividade + monitor/timeline à esquerda, biblioteca fixa à direita.
 * **Testado** em 360 / 390 / 768 / 1024 / 1440 px: 0 erros de console, 0 rolagem horizontal, 0 asset quebrado, axe-core sem violações críticas após ajustes; fluxos: entrada → percurso → atividade → vídeo → montagem → leitura → reflexão → guardar → descoberta → duplicar → comparar A/B → caderno → perfil → recarregar/retomar → `file://`.
+
+---
+
+## 14. Revisão 2 — o que mudou e por quê (substitui onde houver conflito com as seções acima)
+
+**Fonte visual nova:** a capa impressa (miniatura). Identidade passou de "branco + amarelo de claquete" para **vermelho `#d8000f` + branco + preto + película sépia**; amarelo ficou só como marcador. Capa digital reproduz a da cartilha (letras espaçadas C O R / T A N / D O, HISTÓRIAS, tira de película com **vídeo real em sépia**). Duotone feito em CSS (`.duo`). Sem emojis; glifos viraram SVG.
+
+**Pedagogia**
+* **Descoberta nasce da ação** (assistir), não de texto. Substitui a regra "reflexão obrigatória para guardar": guardar é 1 toque; a anotação é opcional e curta (perguntas variam: v1 perceber · v2 "mudou o quê?" · v3 "qual funciona melhor?"; Murch: chips "por causa de quê?").
+* **Trilha essencial** (Ver · Montar · Assistir · Descobrir · Guardar) × **aprofundamento** (Comparar · Experimentar · versões · anotar) — comparar nunca bloqueia.
+* Estágios sem competição: **Experimentou → Descobriu → Aprofundou** (`CH.stage`); "Aprofundou" = contrato do motor (`checkCompletion` + reflexão exigida).
+* **Descoberta**: "Você acabou de experimentar X" + o que ganhou (fotograma, conceito, Caderno) + "Na cartilha". Combinações fora da proposta = **"Exploração diferente"**, sem julgamento.
+* **Kuleshov**: bloco "Mesmo rosto + imagem diferente = leitura diferente" com os próprios quadros.
+* **Jump cut × elipse**: perguntas distintas (`pedagogia.json › depois`) e métrica própria: elipse mostra **tempo omitido** ("Você não viu esse tempo passar. Mas entendeu que ele passou"); jump cut pergunta **o que saltou na imagem**.
+* **A professora**: o conceito exibido é "o mesmo lugar, outro tempo" (passagem de tempo), não "match cut".
+* **Murch**: pergunta de decisão ("por causa de quê?") em vez de resposta correta.
+* **Revelação progressiva**: 1ª atividade com guia de 4 passos; ferramentas só aparecem quando há o que fazer; aba Aprofundar só após assistir.
+* **Nome protegido**: textos de leitura e feedback são neutralizados até a descoberta (`CH.neutral`).
+
+**Conteúdo e cartilha**: Biblioteca de descobertas (`#/conceitos`: fundamentos do glossário do v7 + técnicas reveladas, cada uma com exemplo em vídeo, atividade e cartilha); Jornada do Editor (7 estações). Ponte com a cartilha em `data/cartilha.json` (campos a preencher); IDs de atividade estáveis + `npm run qr`.
+
+**Ritmo / respiro**: missão vira bloco editorial com filete vermelho; caixas amarelas removidas; ferramentas ocultas até serem úteis; `Mover/Limpar` só com ≥ 2 planos.
+
+### Autoauditoria honesta (o que fiz × o que só a cartilha resolve)
+
+| Categoria | Situação | Limite real |
+|---|---|---|
+| Conceito pedagógico, didática, clareza p/ iniciante, atividades, progressão | Corrigidos os pontos apontados (descoberta pela ação, guia, Faça/Observe, exploração diferente, jump cut × elipse, Murch) e cobertos por `npm test` | Não foi testado com pessoas reais; isso é o próximo teste |
+| UX / UI / linguagem / identidade | Capa da cartilha reinterpretada; emojis removidos; respiro revisto; axe sem violações | Fonte original da cartilha desconhecida |
+| Acessibilidade | axe AA limpo; teclado; reduced motion; texto maior | Sem leitor de tela real testado |
+| Gamificação | Folha de contato + descobertas + jornada, sem competição | — |
+| **Cartilha ↔ laboratório** | Estrutura, campos, links condicionais e QR prontos | **Páginas/seções/PDF e "Quem foi?" dependem da cartilha (não chegou)** — por isso a nota aqui não chega a 9,5 |
+| Coerência audiovisual / qualidade técnica | Vídeo real em tudo; 15 atividades em regressão; 0 erros de console | MP4/iOS não testados em aparelho real (WebM preservado; fallback documentado) |

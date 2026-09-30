@@ -1,17 +1,92 @@
 {
-  "EX_KULESHOV_001": {"conceito":"efeito Kuleshov","ver":"Olhe o rosto dele por um instante. Agora pense: o que ele está pensando?"},
-  "EX_KULESHOV_002": {"conceito":"efeito Kuleshov","ver":"Há dois closes do menino. O que cada um deixa você ver do rosto dele?"},
-  "EX_CORTE_001":    {"conceito":"corte na ação","ver":"Acompanhe a mão até o copo. Em que momento do gesto você cortaria?"},
-  "EX_CORTE_002":    {"conceito":"jump cut e plano de inserção","ver":"Repare onde a câmera está em cada plano e o que mudou dentro do quadro."},
-  "EX_CORTE_003":    {"conceito":"o mesmo lugar, outro tempo","ver":"Onde a professora está na tela em cada plano? E o que mudou em volta dela?"},
-  "EX_CORTE_004A":   {"conceito":"olhar e contraplano","ver":"Para onde o homem olha? Que imagem responde a esse olhar?"},
-  "EX_CORTE_004B":   {"conceito":"sequência de montagem","ver":"O que cada objeto conta sobre quem vive nessa casa?"},
-  "EX_CORTE_004C":   {"conceito":"cutaway e contraplano","ver":"Quem fala? Quem escuta? O que acontece fora da porta?"},
-  "EX_MURCH_001":    {"conceito":"emoção antes da regra","ver":"Veja o abraço. Que imagem ajuda você a sentir o que ela sente?"},
-  "EX_MURCH_002":    {"conceito":"a hora de revelar","ver":"Quem está sentado ao lado dela? Você descobre de perto ou de longe?"},
-  "EX_JUMPCUT_NL01": {"conceito":"jump cut","ver":"Assista ao plano inteiro. Note o que está no quadro no começo e no fim."},
-  "EX_ELIPSE_NL01":  {"conceito":"elipse","ver":"Assista ao plano inteiro: alguém entra na água e caminha pelo rio. Quanto tempo passa?"},
-  "EX_CONTINU_DF01": {"conceito":"plano/contraplano","ver":"Duas pessoas se encontram. Para onde cada uma olha?"},
-  "EX_MATCHCUT_MC01":{"conceito":"match cut","ver":"Compare o retrato e a pessoa. O que as duas imagens têm em comum?"},
-  "EX_LAB_LIVRE":    {"conceito":null,"ver":"Escolha qualquer plano, de qualquer filme, e comece."}
+ "EX_KULESHOV_001": {
+  "conceito": "efeito Kuleshov",
+  "ver": "Olhe o rosto dele. O que ele parece estar pensando?",
+  "observe": "Olhe o rosto dele. O que ele parece estar pensando?",
+  "depois": "O que esse homem parece sentir agora? O rosto é o mesmo."
+ },
+ "EX_KULESHOV_002": {
+  "conceito": "efeito Kuleshov",
+  "ver": "Há dois closes do menino. Qual deixa você ver melhor a reação dele?",
+  "observe": "Há dois closes do menino. Qual deixa você ver melhor a reação dele?",
+  "depois": "O que o menino parece sentir com esta imagem ao lado?"
+ },
+ "EX_CORTE_001": {
+  "conceito": "corte na ação",
+  "ver": "Acompanhe a mão até o copo. Em que momento do gesto você cortaria?",
+  "observe": "Acompanhe a mão até o copo. Em que momento do gesto você cortaria?",
+  "depois": "Em qual versão você percebeu o corte? Onde estava a mão?"
+ },
+ "EX_CORTE_002": {
+  "conceito": "jump cut e plano de inserção",
+  "ver": "Repare onde a câmera está em cada plano e o que mudou dentro do quadro.",
+  "observe": "Repare onde a câmera está em cada plano e o que mudou dentro do quadro.",
+  "depois": "Quando os planos da mesma câmera ficam colados, o que acontece com o tempo?"
+ },
+ "EX_CORTE_003": {
+  "conceito": "o mesmo lugar, outro tempo",
+  "ver": "Onde a professora está na tela em cada plano? O que mudou em volta dela?",
+  "observe": "Onde a professora está na tela em cada plano? O que mudou em volta dela?",
+  "depois": "Quanto tempo você sente que passou entre um plano e o outro?"
+ },
+ "EX_CORTE_004A": {
+  "conceito": "olhar e contraplano",
+  "ver": "Para onde o homem olha? Que imagem responde a esse olhar?",
+  "observe": "Para onde o homem olha? Que imagem responde a esse olhar?",
+  "depois": "O público entende o que ele está olhando?"
+ },
+ "EX_CORTE_004B": {
+  "conceito": "sequência de montagem",
+  "ver": "O que cada objeto conta sobre quem vive nessa casa?",
+  "observe": "O que cada objeto conta sobre quem vive nessa casa?",
+  "depois": "O último objeto muda o que você entendeu da casa?"
+ },
+ "EX_CORTE_004C": {
+  "conceito": "cutaway e contraplano",
+  "ver": "Quem fala? Quem escuta? O que acontece fora da porta?",
+  "observe": "Quem fala? Quem escuta? O que acontece fora da porta?",
+  "depois": "O que a interrupção faz com a conversa?"
+ },
+ "EX_MURCH_001": {
+  "conceito": "emoção antes da regra",
+  "ver": "Veja o abraço. Que imagem ajuda você a sentir o que ela sente?",
+  "observe": "Veja o abraço. Que imagem ajuda você a sentir o que ela sente?",
+  "depois": "Você escolheu esse plano por causa de quê?"
+ },
+ "EX_MURCH_002": {
+  "conceito": "a hora de revelar",
+  "ver": "Quem está sentado ao lado dela? Você descobre de perto ou de longe?",
+  "observe": "Quem está sentado ao lado dela? Você descobre de perto ou de longe?",
+  "depois": "Você escolheu esse plano por causa de quê?"
+ },
+ "EX_JUMPCUT_NL01": {
+  "conceito": "jump cut",
+  "ver": "Assista ao plano inteiro. Note o que está no quadro no começo e no fim.",
+  "observe": "Assista ao plano inteiro. Note o que está no quadro no começo e no fim.",
+  "depois": "O que aconteceu com a imagem quando você retirou esse trecho?"
+ },
+ "EX_ELIPSE_NL01": {
+  "conceito": "elipse",
+  "ver": "Alguém entra na água e caminha pelo rio. Quanto tempo dura essa ação?",
+  "observe": "Alguém entra na água e caminha pelo rio. Quanto tempo dura essa ação?",
+  "depois": "Quanto tempo da ação desapareceu? Você sentiu o tempo passar?"
+ },
+ "EX_CONTINU_DF01": {
+  "conceito": "plano/contraplano",
+  "ver": "Duas pessoas se encontram. Para onde cada uma olha?",
+  "observe": "Duas pessoas se encontram. Para onde cada uma olha?",
+  "depois": "Parece que uma está olhando para a outra? E se você inverter a ordem?"
+ },
+ "EX_MATCHCUT_MC01": {
+  "conceito": "match cut",
+  "ver": "Compare o retrato e a pessoa. O que as duas imagens têm em comum?",
+  "observe": "Compare o retrato e a pessoa. O que as duas imagens têm em comum?",
+  "depois": "O que uma imagem empresta à outra?"
+ },
+ "EX_LAB_LIVRE": {
+  "conceito": null,
+  "ver": "Escolha qualquer plano, de qualquer filme, e comece.",
+  "observe": "Escolha qualquer plano, de qualquer filme, e comece.",
+  "depois": "O que mudou quando você trocou a ordem?"
+ }
 }

@@ -18,6 +18,7 @@
   /* cor */
   --papel:#ffffff; --tinta:#0b0b0b;
   --g1:#f5f5f2; --g2:#e7e7e2; --g3:#cfcfc9; --g4:#8c8c86; --g5:#595955;
+  --vermelho:#d8000f; --vermelho-esc:#a80010; --sepia:#b98a4a; --sepia-esc:#6b4a22;
   --claquete:#f5c518; --claquete-claro:#ffe27a; --claquete-fundo:#fff6cf;
   --entrada:#0f9d58; --saida:#e5322b;           /* alças de aparar (ref. 2) */
   --foco:#1a56ff;

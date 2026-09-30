@@ -3,11 +3,11 @@
 "use strict";
 const CH=window.CH,KEY="ch:v1";
 const fresh=()=>({v:1,profile:{name:"",created:Date.now()},prefs:{motion:"auto",bigtext:false,contrast:false},
-  act:{},notes:[],disc:{},last:null,story:{seen:false}});
+  act:{},notes:[],disc:{},last:null,story:{seen:false},flags:{}});
 let S,mem=false;
 function load(){
   try{const r=localStorage.getItem(KEY);S=r?Object.assign(fresh(),JSON.parse(r)):fresh()}catch(e){S=fresh();mem=true}
-  S.prefs=Object.assign(fresh().prefs,S.prefs||{});
+  S.prefs=Object.assign(fresh().prefs,S.prefs||{});S.flags=S.flags||{};
 }
 function save(){if(mem)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){mem=true}}
 load();
@@ -37,6 +37,8 @@ CH.store={
   delVersion(id,vid){const a=A(id);a.versions=a.versions.filter(v=>v.id!==vid);a.done=false;save()},
   setReflection(id,t){A(id).reflection=t;save()},
   setAnswer(id,v){A(id).answer=v;save()},
+  updateVersion(id,vid,patch){const v=A(id).versions.find(x=>x.id===vid);if(v){Object.assign(v,patch);save()}},
+  flag(k,v){if(v===undefined)return !!S.flags[k];S.flags[k]=!!v;save()},
   markDone(id,yes){const a=A(id);if(yes&&!a.done){a.done=true;a.doneAt=Date.now()}else if(!yes){a.done=false}save()},
 
   /* caderno */
@@ -74,7 +76,7 @@ CH.progress=function(exId){
 };
 CH.nextActivity=function(){
   /* primeira atividade (na ordem do Percurso) que ainda não foi concluída */
-  for(const ato of CH.data.atos.atos)for(const id of CH.atividadesDoAto(ato)){if(CH.progress(id).status!=="concluida")return id}
+  for(const ato of CH.data.atos.atos)for(const id of CH.atividadesDoAto(ato)){if(CH.stage(id)<2)return id}
   return null};
 CH.applyPrefs=function(){
   const p=S.prefs,r=document.documentElement;
@@ -83,3 +85,15 @@ CH.applyPrefs=function(){
 };
 CH.applyPrefs();
 })();
+
+/* Estágio de aprendizagem de uma atividade — NÃO é competição:
+   0 não iniciada · 1 experimentou · 2 descobriu (nome revelado) · 3 aprofundou (contrato completo do motor) */
+CH.stage=function(exId){
+  const a=CH.store.state.act[exId];
+  if(!a||!(a.versions.length||a.watchedOnce||a.draft||a.started))return 0;
+  if(exId===CH.LIVRE)return a.versions.length?2:1;
+  const disc=Object.values(CH.store.discoveries()).some(d=>d.exId===exId);
+  if(CH.progress(exId).done)return 3;
+  return disc?2:(a.watchedOnce||a.versions.length?1:0);
+};
+CH.STAGE_LABEL=["Não iniciada","Experimentou","Descobriu","Aprofundou"];

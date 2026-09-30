@@ -17,7 +17,8 @@ const ROUTES=[
   [/^\/contraste$/,"percurso",(c,m)=>CH.views.contraste(c,m)],
   [/^\/caderno$/,"caderno",(c,m)=>CH.views.notebook(c,m)],
   [/^\/eu$/,"eu",(c,m)=>CH.views.me(c,m)],
-  [/^\/creditos$/,"eu",(c,m)=>CH.views.credits(c,m)]
+  [/^\/creditos$/,"eu",(c,m)=>CH.views.credits(c,m)],
+  [/^\/conceitos$/,"percurso",(c,m)=>CH.views.concepts(c,m)]
 ];
 CH.views=CH.views||{};
 let cur=null;

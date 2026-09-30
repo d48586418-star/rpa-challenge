@@ -1,0 +1,158 @@
+/* ============================================================
+   IDENTIDADE DA CAPA (vermelho · branco · preto · película sépia) + revisão pedagógica.
+   Camada final: ajusta a paleta e estiliza descoberta, jornada, biblioteca, guia da 1ª atividade.
+   ============================================================ */
+.tag.r{background:var(--vermelho);color:#fff}
+.tape-track span::after{content:"";width:16px;height:16px;background:currentColor;-webkit-mask:var(--ic-cut) center/contain no-repeat;mask:var(--ic-cut) center/contain no-repeat;font-size:0}
+:root{--ic-cut:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='6' cy='6.5' r='2.6'/%3E%3Ccircle cx='6' cy='17.5' r='2.6'/%3E%3Cpath d='M8 8 20 18M8 16 20 6'/%3E%3C/svg%3E")}
+
+/* ---- Faça / Observe: editorial, sem caixa amarela ---- */
+.mission{background:#fff;border:0;border-left:8px solid var(--vermelho);border-radius:0;padding:4px 0 4px 18px;margin:var(--s4) 0 var(--s5);gap:10px}
+.mission .eyebrow{color:var(--vermelho);font-weight:700}
+.ms-text{font:600 clamp(1.15rem,1.05rem + .5vw,1.45rem)/1.35 var(--sans);max-width:52ch}
+.ms-ver{display:grid;gap:2px;font-size:1rem;color:var(--g5);max-width:52ch}
+.ms-ver .eyebrow{color:var(--tinta)}
+.lab[data-free="1"] .mission{background:var(--tinta);color:#fff;border-left-color:var(--vermelho);padding:16px 18px;border-radius:var(--r2)}
+.lab[data-free="1"] .ms-ver{color:#ffffffc0}
+.lab-title .h2{letter-spacing:.005em}
+
+/* ---- guia da primeira atividade ---- */
+.coach{display:flex;align-items:center;gap:12px;margin:0 0 var(--s4);padding:12px 14px;background:var(--tinta);color:#fff;border-radius:var(--r2);animation:viewIn var(--dur-2) var(--ease) both}
+.coach[hidden]{display:none}
+.coach p{flex:1;font-weight:600;line-height:1.35}
+.coach b{color:var(--claquete)}
+.coach-n{background:var(--vermelho);border-radius:var(--rp);padding:2px 9px;font-weight:700;flex:none}
+.coach .btn{flex:none;color:#fff;background:transparent;border-color:#ffffff88}
+@media (max-width:520px){.coach{flex-wrap:wrap}.coach .btn{margin-left:auto}}
+
+/* ---- trilha: essencial × aprofundamento ---- */
+.st.now{background:var(--tinta);color:#fff;border-color:var(--tinta);box-shadow:none}
+.st.now .n{background:var(--vermelho);color:#fff}
+.stepper .sep{flex:none;width:1px;background:var(--g3);margin:4px 6px;padding:0;border:0;min-height:26px;border-radius:0}
+.st.deep{border-style:dashed;background:transparent}
+.st.deep .n{background:transparent;border:2px solid var(--g3)}
+.st.deep.done{border-style:solid}
+.st.deep.done .n{background:var(--tinta);border-color:var(--tinta)}
+.cp.act{box-shadow:inset 0 -6px 0 var(--fc,#888),0 0 0 6px var(--vermelho)}
+.cp.now::after{background:var(--vermelho)}
+.ptabs [role=tab][aria-selected="true"]{background:var(--vermelho)}
+.ptabs .cnt{background:var(--tinta);color:#fff}
+.ptabs .dot{background:var(--vermelho)}
+
+/* ---- leitura: descoberta no topo ---- */
+.disc.open{background:var(--vermelho);color:#fff;border-color:var(--tinta);box-shadow:6px 6px 0 var(--tinta);gap:10px;padding:20px 18px;margin-top:0;margin-bottom:var(--s4)}
+.disc.open .eyebrow{color:#fff;opacity:.92}
+.disc.open .disc-pre{font-weight:500;opacity:.95}
+.disc.open .disc-name{font-size:clamp(2.6rem,13vw,5rem);line-height:.88;margin:0}
+.disc.open .disc-def{font-size:1.05rem;line-height:1.45;max-width:54ch}
+.disc.open .link{color:#fff;text-decoration-color:#fff}.disc.open .link:hover{background:#fff;color:var(--vermelho)}
+.disc-gain{display:grid;gap:6px;margin:4px 0;padding:12px 0;border-block:1px solid #ffffff66}
+.disc-gain li{display:flex;gap:10px;align-items:center;font-size:.92rem}
+.disc-gain svg{width:20px;height:20px;flex:none}
+.disc.open .disc-carti{font-size:.92rem}
+.disc.other{border:2px dashed var(--tinta);background:#fff;margin-top:0;margin-bottom:var(--s4)}
+.rd-ask{padding:16px;border:2px solid var(--tinta);border-radius:var(--r2);background:#fff}
+.rd-q{font:800 clamp(1.15rem,1.05rem + .6vw,1.5rem)/1.2 var(--display);font-stretch:85%;font-variation-settings:"wdth" 85;margin-top:4px}
+.omit{padding:16px;background:var(--g1);border-radius:var(--r2)}
+.omit-n{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.omit-n b{font-size:clamp(2.4rem,10vw,3.6rem);color:var(--vermelho)}
+.omit-bar{height:14px;background:repeating-linear-gradient(90deg,var(--vermelho) 0 6px,#f2b3b8 6px 8px);margin:8px 0;border:2px solid var(--tinta);border-radius:3px;position:relative;overflow:hidden}
+.omit-bar i{position:absolute;inset:0 auto 0 0;background:var(--tinta);display:block}
+.rd-card{border-left-color:var(--tinta)}
+.rd-ic{background:var(--tinta);color:#fff}.rd-ic svg{width:26px;height:26px}
+.rd-e{background:var(--g1)}
+.rd-prompts li{background:#fff}
+.rd-actions .btn.pri{flex:1 1 220px}
+.rd-actions .btn{height:auto;min-height:48px;white-space:normal;text-align:left;padding-block:10px}
+
+/* Kuleshov: mesmo rosto + imagem diferente = leitura diferente */
+.recap{padding:16px;border:2px solid var(--tinta);border-radius:var(--r2);background:#fff}
+.rc-head{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font:800 .78rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 10px}
+.rc-head span{color:var(--vermelho)}
+.rc-list{display:grid;gap:10px}
+.rc-list li{display:grid;grid-template-columns:1fr auto 1fr auto;grid-template-areas:"a op b eq" "r r r r";gap:6px 8px;align-items:center;padding-bottom:10px;border-bottom:1px dashed var(--g3)}
+.rc-list li:last-child{border-bottom:0;padding-bottom:0}
+.rc-f{margin:0;border:2px solid var(--tinta);overflow:hidden;background:#000;border-radius:4px}
+.rc-f img{width:100%;height:auto;display:block}
+.rc-op{font:700 1.4rem/1 var(--mono);color:var(--vermelho)}
+.rc-read{grid-area:r;font:800 1.1rem/1.2 var(--display);font-stretch:85%;font-variation-settings:"wdth" 85;text-transform:uppercase;background:var(--claquete);padding:6px 10px;justify-self:start}
+@media (min-width:520px){.rc-list li{grid-template-columns:1fr auto 1fr auto 1.2fr;grid-template-areas:"a op b eq r"}.rc-read{align-self:center}}
+
+/* Murch: por que você escolheu */
+.chips{display:flex;flex-wrap:wrap;gap:8px;border:0;padding:0;margin:0}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:2px solid var(--tinta);border-radius:var(--rp);font-weight:700;background:#fff}
+.chip input:checked+span{background:var(--tinta);color:#fff}
+.chip input:focus-visible+span{outline:3px solid var(--foco);outline-offset:2px}
+
+/* ---- aprofundar ---- */
+.prog-card{border-color:var(--g4)}
+.prog-card li::before{background:var(--vermelho)}
+.done-card{background:var(--g1)}
+.contrast-link{background:var(--g1);border:0;border-left:8px solid var(--vermelho);border-radius:0 var(--r2) var(--r2) 0}
+.contrast-link:hover{background:#fde8ea}
+.contrast-link.lv{background:var(--tinta);border-left-color:var(--vermelho);color:#fff}
+.vs-exrefl{background:var(--g1);border-color:var(--g3)}
+
+/* ---- percurso: folha de contato e estágios ---- */
+.cs.lv1 .fr,.cs.lv2 .fr,.cs.lv3 .fr{animation:develop .9s var(--ease) both}
+.cs.on .fr{animation:none}
+.cs-key{display:flex;flex-wrap:wrap;gap:6px 16px;margin:12px 0 0;font:600 .72rem/1 var(--mono);color:var(--g5);text-transform:uppercase;letter-spacing:.04em}
+.cs-key span{display:inline-flex;align-items:center;gap:6px}
+.cs-key .fr{width:22px;height:auto}
+.act.lv3 .act-st,.act.lv2 .act-st{color:var(--tinta)}
+.act.lv2 .act-st svg,.act.lv3 .act-st svg{color:var(--vermelho)}
+.act-st svg{width:16px;height:16px}
+.ato-h{border-bottom:2px solid var(--tinta)}
+
+/* ---- Jornada do Editor: linha de montagem ---- */
+.jornada{margin:0 0 var(--s7)}
+.jn-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.jn-lead{margin:6px 0 var(--s3);max-width:56ch}
+.jn-line{display:flex;gap:0;overflow-x:auto;padding:14px 0 14px;background:var(--tinta);border-radius:var(--r2) var(--r2) 0 0;scrollbar-width:thin;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.jn{position:relative;flex:0 0 150px;scroll-snap-align:start;display:grid;gap:4px;padding:10px 14px 12px;color:#ffffff88;border-right:2px dashed #ffffff33;align-content:start;min-height:112px}
+.jn:last-child{border-right:0}
+.jn b{font:900 1.15rem/1 var(--display);font-stretch:70%;font-variation-settings:"wdth" 70;text-transform:uppercase;color:inherit}
+.jn-n{font-size:.72rem;color:inherit}
+.jn-f{font-size:.78rem;line-height:1.3;color:inherit}
+.jn.seen{color:#fff}
+.jn.lit{color:#fff;background:var(--vermelho)}
+.jn.lit .jn-n::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#fff;margin-right:6px}
+.me .jn{flex-basis:118px;min-height:80px}
+.me .jornada{margin:0 0 var(--s4)}
+@media (min-width:900px){.jn{flex:1 1 0;min-width:130px}}
+
+/* ---- biblioteca de descobertas ---- */
+.conc{max-width:1100px}
+.conc section{margin-bottom:var(--s7)}
+.conc .h3{margin-bottom:var(--s3)}
+.fund{display:grid;gap:12px}
+.fd{display:grid;grid-template-columns:132px 1fr;gap:14px;padding:14px 0;border-top:2px solid var(--tinta);align-items:start}
+.fd-strip{display:flex;gap:0;height:92px;border:2px solid var(--tinta);overflow:hidden}
+.fd-strip img{flex:1;min-width:0;height:100%;object-fit:cover}
+.fd-tl{height:92px;border:2px solid var(--tinta);display:flex;gap:3px;padding:6px;align-items:stretch}
+.fd-tl i{flex:1;background:var(--g2);border:2px solid var(--tinta)}
+.fd-tl i:nth-child(2){background:var(--vermelho)}
+.fd-i{font-weight:600;line-height:1.35;margin:2px 0 6px;max-width:48ch}
+.fd details summary{cursor:pointer;font:700 .85rem/1 var(--sans);min-height:32px;display:inline-flex;align-items:center;color:var(--vermelho);text-decoration:underline;text-underline-offset:3px}
+.fd details p{margin-top:6px;max-width:52ch;font-size:.95rem}
+@media (min-width:700px){.fund{grid-template-columns:1fr 1fr;gap:0 32px}.fd{grid-template-columns:160px 1fr}}
+.tec{display:grid;gap:12px}
+@media (min-width:700px){.tec{grid-template-columns:1fr 1fr}}
+.tc{padding:18px;border:2px solid var(--tinta);border-radius:var(--r2);display:grid;gap:10px;align-content:start}
+.tc.lock{border-style:dashed;border-color:var(--g3);color:var(--g5);min-height:130px}
+.tc.lock b{font-size:2.6rem;line-height:.9}
+.tc.on{background:#fff;box-shadow:6px 6px 0 var(--vermelho)}
+.tc.on h3{font-size:clamp(2rem,7vw,3rem);line-height:.9;color:var(--vermelho)}
+.tc .eyebrow{color:var(--g5)}
+.tc-v{display:grid;gap:8px;justify-items:start}
+.tc-mon{width:100%;margin:0}
+.tc-l{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;flex-wrap:wrap}
+.tc-l svg{margin-top:3px}
+.cred-h3{margin-top:var(--s4)}
+.duo img{width:100%;height:100%;object-fit:cover}
+
+.duo>img,.duo>video{filter:grayscale(1) contrast(1.05) brightness(1.65)}
+.duo::after{background:var(--vermelho);mix-blend-mode:multiply}
+.duo.sepia>video{filter:grayscale(1) contrast(1.05) brightness(1.5)}

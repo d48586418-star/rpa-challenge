@@ -3,7 +3,8 @@
 (function(){
 "use strict";
 const CH=window.CH,{h,$,$$,esc,fmt,icon}=CH,Lab=CH.Lab,P=Lab.prototype;
-const STEPS=[["ver","Ver"],["montar","Montar"],["assistir","Assistir"],["comparar","Comparar"],["guardar","Guardar"],["experimentar","Experimentar"],["descobrir","Descobrir"]];
+const STEPS=[["ver","Ver"],["montar","Montar"],["assistir","Assistir"],["descobrir","Descobrir"],["guardar","Guardar"]];
+const DEEP=[["comparar","Comparar"],["experimentar","Experimentar"]];
 
 /* ============ referência (uma maneira possível de realizar a proposta — derivada do motor) ============ */
 const REF={};
@@ -44,23 +45,24 @@ CH.readSeq=function(exId,seq,others){
 
 /* ============ chips + stepper ============ */
 P.renderChips=function(){
-  const pr=CH.progress(this.exId),box=this.$("#lab-chips");if(!box)return;
-  const st={nova:["Não iniciada","g"],andamento:["Em andamento","y"],concluida:["Concluída ✓","w"]}[pr.status];
-  const n=CH.store.act(this.exId).versions.length;
-  box.innerHTML=`${this.free?"":`<span class="tag w">${esc(this.ex.difficulty||"")}</span>`}<span class="tag ${st[1]}">${this.free?"Exploração":st[0]}</span><span class="tag g">${n} ${n===1?"versão guardada":"versões guardadas"}</span>`;
+  const box=this.$("#lab-chips");if(!box)return;
+  const st=CH.stage(this.exId),n=CH.store.act(this.exId).versions.length;
+  box.innerHTML=`${this.free?"":`<span class="tag w">${esc(this.ex.difficulty||"")}</span>`}<span class="tag ${st>=2?"r":st?"y":"g"}">${this.free?"Exploração":CH.STAGE_LABEL[st]}</span>${n?`<span class="tag g">${n} ${n===1?"versão guardada":"versões guardadas"}</span>`:""}`;
 };
 P.stepState=function(){
   const a=CH.store.act(this.exId),nv=a.versions.length;
-  const disc=Object.values(CH.store.discoveries()).some(d=>d.exId===this.exId)||CH.progress(this.exId).status==="concluida";
-  return{ver:!!a.viewed||this.seq.length>0||nv>0,montar:this.seq.length>0||nv>0,assistir:this.watched||nv>0,
-    comparar:!!a.compared,guardar:nv>0,experimentar:nv>1,descobrir:disc};
+  const disc=Object.values(CH.store.discoveries()).some(d=>d.exId===this.exId);
+  return{ver:!!a.viewed||this.seq.length>0||nv>0,montar:this.seq.length>0||nv>0,assistir:this.watched||!!a.watchedOnce||nv>0,
+    descobrir:disc,guardar:nv>0,comparar:!!a.compared,experimentar:nv>1};
 };
 P.renderStepper=function(){
   this.renderChips();
   const ol=this.$("#stepper");if(!ol)return;
   const s=this.stepState();let cur=STEPS.findIndex(([k])=>!s[k]);if(cur<0)cur=STEPS.length;
-  ol.innerHTML=STEPS.map(([k,l],i)=>`<li class="st ${s[k]?"done":i===cur?"now":""}" ${i===cur?'aria-current="step"':""}><span class="n">${s[k]?icon("check"):i+1}</span><span class="l">${l}</span><span class="sr">${s[k]?", feito":i===cur?", etapa atual":""}</span></li>`).join("");
+  ol.innerHTML=STEPS.map(([k,l],i)=>`<li class="st ${s[k]?"done":i===cur?"now":""}" ${i===cur?'aria-current="step"':""}><span class="n">${s[k]?icon("check"):i+1}</span><span class="l">${l}</span><span class="sr">${s[k]?", feito":i===cur?", etapa atual":""}</span></li>`).join("")
+   +`<li class="sep" aria-hidden="true"></li>`+DEEP.map(([k,l])=>`<li class="st deep ${s[k]?"done":""}"><span class="n">${s[k]?icon("check"):icon("plus")}</span><span class="l">${l}</span><span class="sr"> (para ir além${s[k]?", feito":""})</span></li>`).join("");
   const now=$(".now",ol);if(now&&ol.scrollWidth>ol.clientWidth){ol.scrollLeft=now.offsetLeft-ol.clientWidth/2+now.clientWidth/2}
+  this.renderCoach&&this.renderCoach();
 };
 
 /* ============ PLANOS (VER) ============ */
@@ -158,10 +160,18 @@ P.resetReadout=function(){this.read=null;this.renderReadout&&this.renderReadout(
 P.readClear=function(){};
 P.afterWatch=function(){
   if(!this.seq.length)return;
-  this.computeRead();this.renderReadout();this.renderStepper();this.renderVersionsDraft();
+  const A=CH.store.act(this.exId);if(!A.watchedOnce){A.watchedOnce=true;CH.store.save()}
+  this.computeRead();
+  const R=this.read,first=[];
+  if(R&&R.L&&R.L.nome&&R.L.situacao==="proposta"&&CH.store.discover(R.L.nome,this.exId)){
+    R.novo=true;
+    CH.store.addNote({kind:"descoberta",exId:this.exId,text:"Descobri: "+R.L.nome+"."});
+  }
+  this.renderReadout();this.renderStepper();this.renderVersionsDraft();this.renderSaveState&&this.renderSaveState();
   const dot=this.$("#t-leitura .dot");if(this.tab!=="leitura"&&!this.wide()){dot.hidden=false}
   if(!this._autoSwitched&&!this.wide()){this._autoSwitched=true;this.setTab("leitura")}
-  CH.say("Montagem assistida. A leitura da montagem está pronta.");
+  this.updateTabs&&this.updateTabs();
+  CH.say(R&&R.novo?"Descoberta revelada: "+R.L.nome:"Montagem assistida. A leitura está pronta.");
 };
 P.computeRead=function(){
   const seq=this.seq;
@@ -188,22 +198,25 @@ P.prompts=function(clips,r){
 };
 P.renderReadout=function(){
   const body=this.$("#rd-body");if(!body)return;
-  if(!this.seq.length){body.innerHTML=this.emptyRead("Comece escolhendo planos","Monte uma sequência na timeline. A leitura aparece depois que você assistir.",false);return}
-  if(!this.watched||!this.read){body.innerHTML=this.emptyRead("Assista à sua montagem","A leitura só aparece depois que você vê o resultado — primeiro a percepção, depois a explicação.",true);return}
+  if(!this.seq.length){body.innerHTML=this.emptyRead("Comece escolhendo planos","Monte uma sequência na timeline. O que você perceber vem depois de assistir.",false);return}
+  if(!this.watched||!this.read){body.innerHTML=this.emptyRead("Assista à sua montagem","Primeiro a percepção, depois a explicação. Toque em Assistir e observe.",true);return}
   const R=this.read;
   if(R.error){body.innerHTML=`<div class="rd-card"><p>Não foi possível ler esta montagem agora.</p></div>`;return}
   if(R.free){body.innerHTML=this.freeRead();return}
-  const {L,r,clips}=R,a=CH.store.act(this.exId);
-  const tone=L.situacao;
+  const {L,r,clips}=R,a=CH.store.act(this.exId),ped=CH.data.pedagogia[this.exId]||{};
   const disc=CH.store.discoveries();
   const open=L.nome?!!disc[L.nome]:Object.values(disc).some(d=>d.exId===this.exId);
   const mk=t=>open?t:CH.neutral(t);
   const prompts=this.prompts(clips,r);
-  const nm=this.nameStatus();
+  const omit=this.omittedHTML();
   body.innerHTML=`
-  <article class="rd-card s-${tone}">
-    <div class="rd-ic" aria-hidden="true">${esc(L.icone)}</div>
-    <div class="rd-tx"><span class="eyebrow">Leitura da sua montagem</span><h2 class="h3">${esc(L.titulo)}</h2>
+  ${open&&L.nome&&L.situacao==="proposta"?this.discHTML(L,R):this.otherHTML(L)}
+  ${ped.depois?`<div class="rd-block rd-ask"><span class="eyebrow">Percebeu?</span><p class="rd-q">${esc(ped.depois)}</p></div>`:""}
+  ${omit}
+  ${this.recapHTML()}
+  <article class="rd-card s-${L.situacao}">
+    <div class="rd-ic" aria-hidden="true">${icon(CH.gIcon(L.situacao))}</div>
+    <div class="rd-tx"><span class="eyebrow">O que a sua montagem faz</span><h2 class="h3">${esc(L.titulo)}</h2>
       <p class="rd-o">${esc(mk(L.o_que||""))}</p>${L.por_que?`<p class="rd-p">${esc(mk(L.por_que))}</p>`:""}
       ${L.experimente?`<p class="rd-e"><b>Experimente:</b> ${esc(mk(L.experimente))}</p>`:""}</div>
   </article>
@@ -212,11 +225,9 @@ P.renderReadout=function(){
   ${this.questionHTML(a)}
   ${this.contrastLink()}
   <div class="rd-block rd-actions">
-    ${CH.referenceSeq(this.exId)&&r.class!=="valid"?`<button class="btn sm" type="button" data-ref>${icon("compare")}Comparar com uma referência</button>`:""}
-    ${CH.referenceSeq(this.exId)&&r.class==="valid"?`<button class="btn sm ghost" type="button" data-ref>${icon("compare")}Ver outra forma de montar</button>`:""}
-    <button class="btn sm" type="button" data-tab-v>${icon("save")}Guardar esta versão</button>
-  </div>
-  ${nm.html}`;
+    <button class="btn pri" type="button" data-save-quick ${this.saveBlock()?"disabled":""}>${icon("save")}Guardar esta versão</button>
+    <button class="btn" type="button" data-exp>${icon("spark")}Quer ir além? Experimente outra combinação</button>
+  </div>`;
 };
 P.emptyRead=function(t,d,btn){
   return `<div class="rd-empty"><span class="strip"><i></i><i class="on"></i><i></i><i></i></span><h2 class="h3">${esc(t)}</h2><p class="muted">${esc(d)}</p>${btn&&this.seq.length?`<button class="btn ink" type="button" data-play>${icon("play")}Assistir agora</button>`:""}</div>`;
@@ -226,7 +237,7 @@ P.freeRead=function(){
   const sug=[];
   if(seq.length===1)sug.push("Adicione um segundo plano. O que um plano faz com o outro?");
   else{sug.push("Troque a ordem de dois planos e assista de novo. O que muda?");sug.push("Tire um plano. A história ainda se entende?");sug.push("Encurte um plano. Como o ritmo muda?")}
-  return `<article class="rd-card s-free"><div class="rd-ic" aria-hidden="true">○</div><div class="rd-tx"><span class="eyebrow">Laboratório livre</span><h2 class="h3">Sem certo ou errado</h2>
+  return `<article class="rd-card s-free"><div class="rd-ic" aria-hidden="true">${icon("circle")}</div><div class="rd-tx"><span class="eyebrow">Laboratório livre</span><h2 class="h3">Sem certo ou errado</h2>
     <p class="rd-o">${seq.length} ${seq.length===1?"plano":"planos"}, ${T.toFixed(1)} s, ${Math.max(0,seq.length-1)} ${seq.length===2?"corte":"cortes"}${films.length>1?`, ${films.length} filmes diferentes`:""}.</p>
     <p class="rd-p">O sentido é você quem decide. Descreva o que percebeu em uma frase — é assim que uma montagem vira autoria.</p></div></article>
     <div class="rd-block"><span class="eyebrow">Experimente</span><ul class="rd-prompts">${sug.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
@@ -245,28 +256,51 @@ P.questionHTML=function(a){
 };
 
 /* ============ DESCOBERTA (nomeação depois) ============ */
-P.unlocked=function(v){
-  const rp=this.rp(),a=CH.store.act(this.exId);
-  if(!rp.required)return true;
-  if(rp.scope==="per_version")return !!(v.reflection||"").trim();
-  return !!(a.reflection||"").trim();
+P.unlocked=function(v){return true};
+P.otherHTML=function(L){
+  return `<section class="disc other"><span class="eyebrow">Exploração diferente</span><p>${icon("compare")}<span>Você encontrou outra possibilidade. Ela funciona como experiência, mas não é o efeito que estamos investigando nesta atividade.${CH.referenceSeq(this.exId)?" Quer ver o que a atividade investiga? Abra <b>Aprofundar → Comparar</b>.":""}</span></p></section>`;
 };
-P.nameStatus=function(){
-  const a=CH.store.act(this.exId);
-  if(this.free)return{html:""};
-  const last=a.versions[a.versions.length-1];
-  if(!last)return{html:`<div class="disc locked"><span class="eyebrow">Descoberta</span><p>${icon("lock")}<span>Esta técnica tem um nome. Ele aparece depois que você <b>guardar uma versão</b> e escrever o que percebeu.</span></p></div>`};
-  const hit=[...a.versions].reverse().find(v=>v.nome&&this.unlocked(v));
-  if(hit)return{html:this.discHTML(hit)};
-  if(a.versions.some(v=>v.nome)&&!this.unlocked(last))return{html:`<div class="disc locked"><span class="eyebrow">Descoberta</span><p>${icon("lock")}<span>Falta registrar sua reflexão para revelar o nome.</span></p></div>`};
-  return{html:`<div class="disc other"><span class="eyebrow">Descoberta</span><p>${icon("compare")}<span>Sua versão criou uma relação diferente da proposta. Compare com outra versão — e com a referência — para nomear o que mudou.</span></p></div>`};
+P.discHTML=function(L,R){
+  const c=CH.cartiLine(this.exId),ato=c.ato,ped=CH.data.pedagogia[this.exId]||{};
+  const fx=this.act.fx||{};
+  return `<section class="disc open" aria-labelledby="disc-h">
+    <span class="eyebrow">${R&&R.novo?"Descoberta revelada":"Descoberta desta atividade"}</span>
+    <p class="disc-pre">Você acabou de experimentar</p>
+    <h2 class="disc-name display" id="disc-h">${esc(L.nome)}</h2>
+    <p class="disc-def">${esc(L.por_que||L.o_que||"")}</p>
+    <ul class="disc-gain" aria-label="O que você ganhou">
+      <li>${icon("frame")}<span>Fotograma revelado na sua folha de contato</span></li>
+      <li>${icon("key")}<span>Conceito na sua <a class="link" href="#/conceitos">biblioteca de descobertas</a></span></li>
+      <li>${icon("pencil")}<span>Nova entrada no <a class="link" href="#/caderno">Caderno</a></span></li>
+    </ul>
+    <p class="disc-carti">${icon("book")}<span>Na cartilha: <b>${esc(c.text||"volte ao ato correspondente")}</b>${ato?` — <em>${esc(ato.titulo)}</em>`:""}.${c.pdf?` <a class="link" href="${esc(c.pdf)}" target="_blank" rel="noopener">Voltar para a cartilha</a>`:""}</span></p>
+  </section>`;
 };
-P.discHTML=function(v){
-  const ato=CH.atoDe(this.exId),ex=this.ex;
-  return `<div class="disc open"><span class="eyebrow">Descoberta</span><p class="disc-pre">Isso que você fez tem um nome:</p><h3 class="display disc-name">${esc(v.nome)}</h3>
-  <p class="disc-def">${esc(v.porque||"")}</p>
-  <p class="disc-carti">${icon("book")}<span>Volte à cartilha${ato?`, Ato ${ato.n}`:""}, e procure por <b>${esc(v.nome)}</b>.</span></p>
-  <div class="wrap"><button class="btn sm" type="button" data-note-disc="${esc(v.nome)}">${icon("pencil")}Anotar no Caderno</button><button class="btn sm ghost" type="button" data-exp>Experimentar de novo</button></div></div>`;
+/* Kuleshov: MESMO ROSTO + IMAGEM DIFERENTE = LEITURA DIFERENTE, com os próprios frames da atividade */
+P.recapHTML=function(){
+  if((this.ex.category||"")!=="kuleshov"||this.seq.length<2)return"";
+  const A=CH.store.act(this.exId),fx=this.act.fx||{};
+  const pairs=[];
+  const add=(seq)=>{if(seq.length<2)return;const f=seq[0].id,i=seq[1].id;if(!pairs.some(p=>p.f===f&&p.i===i))pairs.push({f,i,t:fx[f+"→"+i]||""})};
+  add(this.seq);A.versions.slice().reverse().forEach(v=>add(v.seq));
+  const P3=pairs.slice(0,3);
+  const fr=id=>{const t=CH.TK[id];return `<figure class="rc-f"><img src="${t.th}" alt="${esc(CH.cardLabel(this.exId,id))}: ${esc(t.s)}" width="160" height="${t.ar==="4:3"?120:90}"></figure>`};
+  return `<section class="rd-block recap" aria-label="Mesmo rosto, imagens diferentes">
+    <span class="eyebrow">O que mudou</span>
+    <div class="rc-head" aria-hidden="true"><b>Mesmo rosto</b><span>+</span><b>Imagem diferente</b><span>=</span><b>Leitura diferente</b></div>
+    <ul class="rc-list">${P3.map(p=>`<li>${fr(p.f)}<span class="rc-op" aria-hidden="true">+</span>${fr(p.i)}<span class="rc-op" aria-hidden="true">=</span><span class="rc-read">${p.t?esc(p.t):"—"}</span></li>`).join("")}</ul>
+    ${P3.length<2?`<p class="muted rc-hint">Troque só a segunda imagem e assista de novo: o rosto continua o mesmo.</p>`:""}
+  </section>`;
+};
+/* Elipse × jump cut: a pergunta pedagógica é outra — mostramos o tempo omitido */
+P.omittedHTML=function(){
+  if(!["EX_ELIPSE_NL01","EX_JUMPCUT_NL01"].includes(this.exId))return"";
+  /* tempo omitido = lacunas ENTRE trechos consecutivos do mesmo plano (o que some "no meio") */
+  let om=0;for(let i=0;i<this.seq.length-1;i++){const a=this.seq[i],b=this.seq[i+1];if(a.id===b.id&&b.a>a.b)om+=(b.a-a.b)*CH.TK[a.id].d}
+  const total=CH.TK[this.seq[0].id].d,kept=Math.max(0,total-om);
+  if(om<=0)return`<div class="rd-block omit"><span class="eyebrow">${this.exId==="EX_ELIPSE_NL01"?"Tempo da ação":"Na imagem"}</span><p class="muted">Nada foi retirado do meio ainda: as pontas estão coladas, então o corte quase não se nota. Corte duas vezes e remova o trecho do meio.</p></div>`;
+  if(this.exId==="EX_ELIPSE_NL01")return `<div class="rd-block omit"><span class="eyebrow">Tempo da ação</span><p class="omit-n"><b class="display">${om.toFixed(0)} s</b> <span>de ${total.toFixed(0)} s desapareceram</span></p><div class="omit-bar" aria-hidden="true"><i style="width:${(kept/total*100).toFixed(1)}%"></i></div><p class="muted">Você não viu esse tempo passar. Mas entendeu que ele passou.</p></div>`;
+  return `<div class="rd-block omit"><span class="eyebrow">Na imagem</span><p class="omit-n"><b class="display">${om.toFixed(0)} s</b> <span>retirados do meio do mesmo plano</span></p><p class="muted">Olhe o quadro logo antes e logo depois do corte: o que saltou?</p></div>`;
 };
 P.checkDiscoveries=function(){
   const a=CH.store.act(this.exId);let novo=null;
@@ -279,14 +313,15 @@ P.checkDiscoveries=function(){
 P.buildVersoes=function(){
   const rp=this.rp(),free=this.free,req=!!rp.required,per=rp.scope;
   const p=this.$("#p-versoes");
-  const reflLabel=free?"Nota sobre esta versão":"Reflexão";
+  const reflLabel=free?"Nota sobre esta versão":"O que você percebeu";
   p.innerHTML=`
   <div class="vs-draft card-flat" id="vs-draft"></div>
   <form class="vs-form" id="vs-form" novalidate>
     ${per==="per_exercise"&&!free?"":`
     <div class="fld">
-      <div class="fld-top"><label for="refl" class="fld-l">${reflLabel}</label><span class="tag ${req?"y":"g"}">${req?"Obrigatória":"Opcional"}</span></div>
-      <p class="fld-p" id="refl-p">${esc(rp.prompt||"O que você percebeu nesta versão?")}${req&&per==="per_version"?" Uma reflexão por versão.":""}</p>
+      <div class="fld-top"><label for="refl" class="fld-l">${reflLabel}</label><span class="tag ${req?"y":"g"}">${req?"Para aprofundar":"Opcional"}</span></div>
+      <p class="fld-p" id="refl-p">${esc(this.promptFor())}</p>
+      ${this.ex.exercise_id&&/^EX_MURCH/.test(this.exId)?`<fieldset class="chips" id="murch"><legend class="sr">Você escolheu esse plano por causa de quê?</legend>${["Emoção","História","Ritmo","Olhar","Plano 2D","Espaço 3D"].map(c=>`<label class="chip"><input type="checkbox" value="${c}"><span>${c}</span></label>`).join("")}</fieldset>`:""}
       <textarea id="refl" rows="3" maxlength="600" ${req?'aria-required="true"':""} aria-describedby="refl-p refl-err" placeholder="${free?"Em uma frase…":"Escreva com suas palavras…"}"></textarea>
       <p class="fld-err" id="refl-err" role="alert" hidden></p>
     </div>`}
@@ -295,7 +330,7 @@ P.buildVersoes=function(){
   </form>
   ${per==="per_exercise"&&!free?`
   <div class="vs-exrefl card-flat" id="vs-exrefl">
-    <div class="fld-top"><label for="refl-ex" class="fld-l">Reflexão da atividade</label><span class="tag ${req?"y":"g"}">${req?"Obrigatória":"Opcional"}</span></div>
+    <div class="fld-top"><label for="refl-ex" class="fld-l">Reflexão da atividade</label><span class="tag ${req?"y":"g"}">${req?"Para aprofundar":"Opcional"}</span></div>
     <p class="fld-p" id="rex-p">${esc(rp.prompt||"")} Uma reflexão para a atividade toda.</p>
     <textarea id="refl-ex" rows="3" maxlength="800" ${req?'aria-required="true"':""} aria-describedby="rex-p"></textarea>
     <div class="row rex-row"><button class="btn sm ink" type="button" id="b-rex">${icon("check")}<span>Registrar reflexão</span></button><span class="muted" id="rex-st"></span></div>
@@ -332,13 +367,21 @@ P.stripHTML=function(seq){
   return seq.map(s=>{const t=CH.TK[s.id];return `<i data-film="${t.f}" style="flex:${(CH.dur(s)/T).toFixed(3)};--fc:var(--f-${t.f});background-image:url(${t.th})" title="${esc(CH.cardLabel(this.exId,s.id))} · ${CH.dur(s).toFixed(1)}s"></i>`}).join("");
 };
 P.saveBlock=function(){
-  const a=CH.store.act(this.exId),rp=this.rp(),rf=this.$("#refl");
+  const a=CH.store.act(this.exId);
   if(!this.seq.length)return"Adicione planos à timeline para guardar uma versão.";
   if(!this.free&&!this.watched)return"Assista à montagem até o fim para poder guardá-la.";
   const last=a.versions[a.versions.length-1];
   if(last&&JSON.stringify(last.seq)===JSON.stringify(this.seq))return"Esta versão já está guardada. Mude algo para guardar outra.";
-  if(rp.required&&rp.scope==="per_version"&&rf&&!rf.value.trim())return"Escreva sua reflexão para guardar. Ela é obrigatória nesta atividade.";
   return"";
+};
+/* perguntas curtas e concretas; a carga de escrita varia de uma versão para outra */
+P.promptFor=function(){
+  const n=CH.store.act(this.exId).versions.length+1,rp=this.rp();
+  if(this.free)return"Em uma frase: o que mudou quando você montou assim?";
+  if(/^EX_MURCH/.test(this.exId))return"Você escolheu esse plano por causa de quê? Marque e, se quiser, escreva.";
+  if(n===1)return rp.prompt||"O que você percebeu nesta versão?";
+  if(n===2)return"Mudou alguma coisa em relação à primeira? O quê?";
+  return"Qual versão funciona melhor para você? Por quê?";
 };
 P.renderSaveState=function(){
   const b=this.$("#b-save");if(!b)return;
@@ -347,18 +390,19 @@ P.renderSaveState=function(){
 };
 P.saveVersion=function(){
   const why=this.saveBlock();
-  if(why){const rf=this.$("#refl"),er=this.$("#refl-err");if(rf&&!rf.value.trim()&&this.rp().required&&this.rp().scope==="per_version"){er.textContent="Escreva pelo menos uma frase. Esta reflexão é obrigatória.";er.hidden=false;rf.focus()}return CH.toast(why)}
-  const rf=this.$("#refl"),refl=rf?rf.value.trim():"";
+  if(why)return CH.toast(why);
+  const rf=this.$("#refl"),ch=$$("#murch input:checked",this.el).map(x=>x.value);
+  let refl=rf?rf.value.trim():"";if(ch.length)refl=("Escolhi por: "+ch.join(", ")+"."+(refl?" "+refl:""));
   let meta={};
   if(!this.free){try{const {clips,r,L}=CH.readSeq(this.exId,this.seq);meta={cls:r.class,matched:r.matched_targets,situacao:L.situacao,titulo:L.titulo,nome:L.nome||null,porque:L.por_que||null}}catch(e){}}
   const before=CH.progress(this.exId).status;
   const v=CH.store.addVersion(this.exId,Object.assign({seq:JSON.parse(JSON.stringify(this.seq)),clips:CH.clipsOf(this.seq),reflection:refl,dur:CH.total(this.seq),from:this.fromVersion||null},meta));
   if(refl)CH.store.addNote({kind:"reflexao",exId:this.exId,vid:v.id,vn:v.n,text:refl});
-  if(rf)rf.value="";
+  if(rf)rf.value="";$$("#murch input:checked",this.el).forEach(x=>x.checked=false);
   this.fromVersion=v.id;this.dirty=false;this.saveDraftNow();
   const novo=this.checkDiscoveries();
   const after=this.completionCheck();
-  CH.toast(after&&before!=="concluida"?"Atividade concluída — seu fotograma foi revelado.":"Versão "+v.n+" guardada.",3200);
+  CH.toast(after&&before!=="concluida"?"Você aprofundou esta atividade.":"Versão "+v.n+" guardada.",3200);
   this.renderVersionList();this.renderProgress();this.renderSaveState();this.renderStepper();this.renderReadout();this.renderVersionsDraft();
   this.$("#cnt-v").textContent=CH.store.act(this.exId).versions.length;
 };
@@ -370,24 +414,24 @@ P.renderRexState=function(){
   const rx=this.$("#refl-ex");if(!rx)return;
   const a=CH.store.act(this.exId),v=rx.value.trim(),b=this.$("#b-rex"),saved=(a.reflection||"").trim();
   b.disabled=!v||v===saved;
-  this.$("#rex-st").textContent=saved&&v===saved?"Registrada ✓":(!v&&this.rp().required?"Escreva para registrar. É obrigatória.":"");
+  this.$("#rex-st").textContent=saved&&v===saved?"Registrada":(!v&&this.rp().required?"Escreva para registrar e aprofundar.":"");
 };
 P.registerExReflection=function(){
   const rx=this.$("#refl-ex"),t=rx.value.trim();if(!t)return CH.toast("Escreva sua reflexão para registrar.");
   CH.store.setReflection(this.exId,t);
   CH.store.addNote({kind:"reflexao",exId:this.exId,vn:null,text:t});
   this.checkDiscoveries();const done=this.completionCheck();
-  CH.toast(done?"Atividade concluída — seu fotograma foi revelado.":"Reflexão registrada.",3200);
+  CH.toast(done?"Você aprofundou esta atividade.":"Reflexão registrada.",3200);
   this.renderRexState();this.renderProgress();this.renderStepper();this.renderReadout();
 };
 P.renderProgress=function(){
   const box=this.$("#vs-prog");if(!box)return;
   if(this.free){box.innerHTML=`<p class="muted">Aqui não há meta: guarde as versões que quiser. Elas vão para o <a class="link" href="#/caderno">Caderno</a>.</p>`;return}
   const pr=CH.progress(this.exId),ex=this.ex,c=ex.evaluation.completion,items=[];
-  const nv=(pr.counted?pr.counted.length:0);
+  const nv=(pr.counted?pr.counted.length:0),st=CH.stage(this.exId);
   if(pr.done){
     const nx=nextAfter(this.exId);
-    box.innerHTML=`<div class="done-card"><div class="done-fr" aria-hidden="true">${CH.frameSVG(CH.atoDe(this.exId)?CH.atoDe(this.exId).cor:"#f5c518",true)}</div><div><span class="eyebrow">Atividade concluída</span><h3 class="h3">Fotograma revelado</h3><p class="muted">Você cumpriu o que a atividade pedia. Pode continuar experimentando quando quiser.</p>
+    box.innerHTML=`<div class="done-card"><div class="done-fr" aria-hidden="true">${CH.frameSVG(CH.atoDe(this.exId)?CH.atoDe(this.exId).cor:"#d8000f",3)}</div><div><span class="eyebrow">Aprofundou</span><h3 class="h3">Você foi além do primeiro experimento</h3><p class="muted">Comparou caminhos e registrou o que percebeu. Siga quando quiser.</p>
     <div class="wrap">${nx?`<a class="btn pri sm" href="#/lab/${nx}">Próxima: ${esc(CH.ACT[nx].t)}${icon("next")}</a>`:""}<a class="btn sm" href="#/percurso">Ver percurso</a></div></div></div>`;return}
   pr.reasons.forEach(r=>{
     if(r==="min_versions")items.push(`Guarde mais versões <b>diferentes</b> (${nv} de ${c.min_versions} por enquanto).`);
@@ -396,13 +440,13 @@ P.renderProgress=function(){
     else if(r==="distinct_violation")items.push("Duas versões usam a mesma imagem: troque por uma bem diferente.");
     else if(r==="equivalence_violation")items.push("Duas versões dizem quase a mesma coisa. Tente uma imagem bem diferente.");
   });
-  if(pr.complete&&!pr.refl.ok)items.push(pr.refl.scope==="per_exercise"?"Falta <b>registrar a reflexão da atividade</b>.":"Falta escrever a reflexão nas versões.");
-  if(!pr.n)items.unshift(`Guarde ${c.min_versions>1?"pelo menos "+c.min_versions+" versões":"uma versão"} para concluir.`);
-  box.innerHTML=`<div class="prog-card"><span class="eyebrow">O que esta atividade pede</span><ul>${items.map(i=>`<li>${i}</li>`).join("")||"<li>Continue experimentando.</li>"}</ul></div>`;
+  if(pr.complete&&!pr.refl.ok)items.push(pr.refl.scope==="per_exercise"?"Falta <b>registrar o que você percebeu</b> (reflexão da atividade).":"Falta anotar o que você percebeu nas versões.");
+  if(!pr.n)items.unshift(`Guarde ${c.min_versions>1?"pelo menos "+c.min_versions+" versões":"uma versão"} para aprofundar.`);
+  box.innerHTML=`<div class="prog-card"><span class="eyebrow">Para aprofundar ${st>=2?"(você já descobriu o conceito)":""}</span><ul>${items.map(i=>`<li>${i}</li>`).join("")||"<li>Continue experimentando.</li>"}</ul><p class="muted">Isso é opcional: você pode seguir para a próxima atividade a qualquer momento.</p></div>`;
 };
 function nextAfter(exId){
   const flat=[];CH.data.atos.atos.forEach(a=>CH.atividadesDoAto(a).forEach(i=>flat.push(i)));
-  const i=flat.indexOf(exId);return flat.slice(i+1).find(x=>CH.progress(x).status!=="concluida")||null;
+  const i=flat.indexOf(exId);return flat.slice(i+1).find(x=>CH.stage(x)<2)||null;
 }
 P.renderVersionList=function(){
   const a=CH.store.act(this.exId),ul=this.$("#vlist");if(!ul)return;
@@ -413,10 +457,10 @@ P.renderVersionList=function(){
     const nm=v.nome&&this.unlocked(v);
     return `<li class="vitem" data-vid="${v.id}"><div class="v-top"><b class="v-n">Versão ${v.n}</b><span class="mono muted">${CH.fmt(v.dur)} · ${CH.ago(v.at)}</span></div>
     <div class="mstrip">${this.stripHTML(v.seq)}</div>
-    ${v.titulo&&!this.free?`<p class="v-t"><span aria-hidden="true">${v.situacao==="proposta"?"✓":v.situacao==="outro_efeito"?"◆":v.situacao==="quebra"?"!":v.situacao==="falta"?"…":"○"}</span> ${esc(v.titulo)}</p>`:""}
-    ${nm?`<p class="v-name"><span class="tag y">Descoberta</span> ${esc(v.nome)}</p>`:""}
+    ${v.titulo&&!this.free?`<p class="v-t">${icon(CH.gIcon(v.situacao),"tiny")}<span>${esc(v.titulo)}</span></p>`:""}
+    ${nm?`<p class="v-name"><span class="tag r">Descoberta</span> ${esc(v.nome)}</p>`:""}
     ${v.reflection?`<blockquote class="v-r">${esc(v.reflection)}</blockquote>`:""}
-    <div class="wrap v-act"><button class="btn sm" type="button" data-vact="open">${icon("copy")}Duplicar e experimentar</button><button class="btn sm ghost" type="button" data-vact="cmp">${icon("compare")}Comparar</button><button class="btn sm ghost" type="button" data-vact="del" aria-label="Excluir versão ${v.n}">${icon("trash")}</button></div></li>`}).join("");
+    <div class="wrap v-act"><button class="btn sm" type="button" data-vact="open">${icon("copy")}Duplicar e experimentar</button><button class="btn sm ghost" type="button" data-vact="cmp">${icon("compare")}Comparar</button><button class="btn sm ghost" type="button" data-vact="note">${icon("pencil")}Anotar</button><button class="btn sm ghost" type="button" data-vact="del" aria-label="Excluir versão ${v.n}">${icon("trash")}</button></div></li>`}).join("");
 };
 P.versionAction=function(act,id){
   const a=CH.store.act(this.exId),v=a.versions.find(x=>x.id===id);if(!v)return;
@@ -426,6 +470,10 @@ P.versionAction=function(act,id){
     this.sel=0;this.updateSelUI();this.player.seek(0);
     CH.toast("Versão "+v.n+" aberta como nova tentativa. Mude algo e assista.");this.$("#b-play").focus();
   }else if(act==="cmp"){this.openCompare("v:"+id,"draft")}
+  else if(act==="note"){
+    const t=prompt("O que você percebeu nesta versão?",v.reflection||"");
+    if(t!==null&&t.trim()){CH.store.updateVersion(this.exId,id,{reflection:t.trim()});CH.store.addNote({kind:"reflexao",exId:this.exId,vid:id,vn:v.n,text:t.trim()});this.checkDiscoveries();this.completionCheck();this.renderVersionList();this.renderProgress();this.renderStepper();CH.toast("Anotação guardada.")}
+  }
   else if(act==="del"){if(confirm("Excluir a versão "+v.n+"? Isso não pode ser desfeito.")){CH.store.delVersion(this.exId,id);this.renderVersionList();this.renderProgress();this.renderStepper();this.renderReadout();CH.toast("Versão excluída.")}}
 };
 P.noteDiscovery=function(nome){
@@ -481,8 +529,40 @@ P.openCompare=function(ka,kb){
   dlg.showModal();
 };
 
-/* fotograma (gamificação sem pontos): quadro de filme que "revela" */
-CH.frameSVG=function(cor,on){
-  return `<svg viewBox="0 0 64 48" class="fr ${on?"on":""}" aria-hidden="true"><rect x="1" y="1" width="62" height="46" rx="4" fill="${on?cor:"#fff"}" stroke="#0b0b0b" stroke-width="2"/>${on?`<path d="M1 34 22 18l14 10 10-8 17 14v13H1z" fill="#0b0b0b" opacity=".18"/><circle cx="46" cy="13" r="5" fill="#fff" opacity=".9"/>`:`<path d="M20 34l10-12 8 8 6-5 8 9" fill="none" stroke="#cfcfc9" stroke-width="2"/>`}</svg>`;
+/* fotograma (gamificação sem pontos): 0 vazio · 1 experimentou · 2 descobriu · 3 aprofundou */
+CH.frameSVG=function(cor,lv){
+  lv=lv===true?2:(lv||0);
+  const fill=lv>=2?cor:"#fff";
+  const body=lv>=2?`<path d="M1 34 22 18l14 10 10-8 17 14v13H1z" fill="#0b0b0b" opacity=".2"/><circle cx="46" cy="13" r="5" fill="#fff" opacity=".9"/>`
+    :lv===1?`<rect x="1" y="30" width="62" height="17" rx="0" fill="${cor}" opacity=".45"/><path d="M20 30l10-12 8 8 6-5 8 9" fill="none" stroke="#0b0b0b" stroke-width="2"/>`
+    :`<path d="M20 34l10-12 8 8 6-5 8 9" fill="none" stroke="#cfcfc9" stroke-width="2"/>`;
+  const badge=lv===3?`<circle cx="54" cy="38" r="8" fill="#0b0b0b"/><path d="m50 38 3 3 6-6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`:"";
+  return `<svg viewBox="0 0 64 48" class="fr lv${lv}" aria-hidden="true"><rect x="1" y="1" width="62" height="46" rx="4" fill="${fill}" stroke="#0b0b0b" stroke-width="2"/>${body}${badge}</svg>`;
+};
+
+/* ============ primeira experiência: a própria atividade ensina o laboratório ============ */
+P.coachStep=function(){
+  if(this.free||CH.store.flag("tutorialDone"))return -1;
+  const a=CH.store.act(this.exId),disc=Object.values(CH.store.discoveries()).some(d=>d.exId===this.exId);
+  if(disc)return 4;if(this.watched)return 3;if(this.seq.length)return 2;if(a.viewed)return 1;return 0;
+};
+const COACH=[
+  ["Toque em <b>Ver</b> num plano para assistir a ele inteiro.","Planos"],
+  ["Agora toque em <b>Adicionar</b> para colocá-lo na timeline. Depois adicione outro.","Planos"],
+  ["Toque em <b>Assistir</b> e observe a sua montagem.","Monitor"],
+  ["Leia a descoberta. É o que a sua montagem acabou de mostrar.","Leitura"],
+  ["Pronto: você já sabe usar o laboratório. Guarde a versão ou siga em frente.","Pronto"]];
+P.renderCoach=function(){
+  const box=this.$("#coach");if(!box)return;
+  const k=this.coachStep();
+  if(k<0){box.hidden=true;return}
+  if(k===4&&!this._coachDone){this._coachDone=true;setTimeout(()=>{CH.store.flag("tutorialDone",true);this.renderCoach()},6000)}
+  box.hidden=false;
+  box.innerHTML=`<span class="coach-n mono">${Math.min(k+1,4)}/4</span><p>${COACH[k][0]}</p>${k<4?`<button class="btn ghost sm" type="button" data-coach-skip>Pular guia</button>`:""}`;
+};
+P.updateTabs=function(){
+  const a=CH.store.act(this.exId),on=this.free||this.watched||a.watchedOnce||a.versions.length>0;
+  const t=this.$("#t-versoes");if(t)t.hidden=!on;
+  this.updateToolsVis&&this.updateToolsVis();
 };
 })();

@@ -8,7 +8,7 @@ button,input,textarea,select{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 a{color:inherit}
 [hidden]{display:none!important}
-::selection{background:var(--claquete);color:var(--tinta)}
+::selection{background:var(--vermelho);color:#fff}
 
 /* foco sempre visível */
 :focus{outline:none}
@@ -16,7 +16,7 @@ a{color:inherit}
 [tabindex="-1"]:focus,[tabindex="-1"]:focus-visible{outline:none}
 .on-dark :focus-visible,.dark :focus-visible{outline-color:var(--claquete)}
 
-.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sr{position:absolute!important;left:0;top:0;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .skip{position:fixed;left:8px;top:-60px;z-index:1000;background:var(--tinta);color:#fff;padding:10px 14px;border-radius:var(--r1);font-weight:700;text-decoration:none;transition:top .15s}
 .skip:focus{top:8px}
 
@@ -35,7 +35,8 @@ a{color:inherit}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border:var(--line);border-radius:var(--rp);background:var(--papel);color:var(--tinta);font:700 .95rem/1 var(--sans);text-decoration:none;white-space:nowrap;transition:transform var(--dur-1) var(--ease),box-shadow var(--dur-1) var(--ease),background var(--dur-1);box-shadow:0 3px 0 var(--tinta)}
 .btn:hover{transform:translateY(-1px);box-shadow:0 4px 0 var(--tinta)}
 .btn:active{transform:translateY(3px);box-shadow:0 0 0 var(--tinta)}
-.btn.pri{background:var(--claquete)}
+.btn.pri{background:var(--vermelho);color:#fff}
+.btn.pri:focus-visible{outline-color:var(--tinta)}
 .btn.ink{background:var(--tinta);color:#fff;box-shadow:0 3px 0 var(--g5)}
 .btn.ink:active{box-shadow:0 0 0 var(--g5)}
 .btn.sm{min-height:44px;padding:0 14px;font-size:.85rem}
@@ -66,10 +67,18 @@ a{color:inherit}
 .tape.black{background:var(--tinta);color:var(--claquete)}
 .tape-track{display:inline-flex;gap:28px;padding:8px 0;animation:tape 38s linear infinite;will-change:transform}
 .tape-track span{font:800 .8rem/1 var(--display);font-stretch:70%;letter-spacing:.08em;text-transform:uppercase;display:inline-flex;align-items:center;gap:28px}
-.tape-track span::after{content:"✂";font-size:.9rem}
+.tape-track span::after{content:"";display:inline-block}
 @keyframes tape{to{transform:translateX(-50%)}}
 
 .card{background:var(--papel);border:var(--line);border-radius:var(--r2);padding:var(--s4)}
 .stack>*+*{margin-top:var(--s4)}
 .row{display:flex;gap:var(--s3);align-items:center}
 .wrap{display:flex;flex-wrap:wrap;gap:var(--s2)}
+
+/* duotone (vermelho × preto) — tratamento da capa, feito em CSS, sem serviço externo */
+.duo{position:relative;isolation:isolate;background:#000}
+.duo>img,.duo>video,.duo>.duo-i{filter:grayscale(1) contrast(1.25) brightness(1.05)}
+.duo::after{content:"";position:absolute;inset:0;background:var(--vermelho);mix-blend-mode:multiply;pointer-events:none;z-index:1}
+.duo.sepia::after{background:var(--sepia)}
+.duo.light::after{mix-blend-mode:screen;opacity:.0}
+.ic-g{display:inline-grid;place-items:center;width:1.1em;height:1.1em}
